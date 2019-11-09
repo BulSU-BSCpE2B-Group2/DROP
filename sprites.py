@@ -22,7 +22,7 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
         if hits:
-            self.vel.y = -20
+            self.vel.y = -player_jump
 
     def update(self):
         self.accel = vec(0, player_gravity)
@@ -38,8 +38,6 @@ class Player(pg.sprite.Sprite):
             self.vel = vec(0, 0)
             self.accel = vec(0, 0)
 
-
-
         # apply friction
         self.accel.x += self.vel.x * player_friction
         # equations of motion
@@ -52,6 +50,7 @@ class Player(pg.sprite.Sprite):
             self.pos.x = width - player_width / 2
 
         self.rect.midbottom = self.pos
+
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):

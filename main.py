@@ -13,19 +13,22 @@ class Game:
         pg.display.set_caption(title)
         self.clock = pg.time.Clock()
         self.running = True
+        self.game_over = False
+        self.font_name = pg.font.match_font(font_name)
+        self.score = 0
 
     def new(self):
         # starting a new game
+        self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        self.player = Player(self)
+        self.all_sprites.add(self.player)
         for platform in platform_list:
             p = Platform(*platform)
             self.all_sprites.add(p)
             self.platforms.add(p)
-        self.player = Player(self)
-        self.all_sprites.add(self.player)
         self.run()
-
 
     def run(self):
         # Game loop
@@ -52,6 +55,15 @@ class Game:
                 if platform.rect.top >= height:
                     platform.kill()
 
+        if self.player.rect.bottom > height:
+            for sprite in self.all_sprites:
+                sprite.rect.y -= max(self.player.vel.y, 10)
+                if sprite.rect.bottom < 0:
+                    sprite.kill()
+
+        if len(self.platforms) == 0:
+            self.game_over = True
+
         # spawn new platforms to keep same average number
         while len(self.platforms) < 6:
             wide = random.randrange(50, 100)
@@ -72,16 +84,20 @@ class Game:
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
             self.running = False
-        """if keys[pg.K_SPACE]:
-            self.player.jump()"""
+        if keys[pg.K_r]:
+            self.game_over = False
+            self.new()
 
     def draw(self):
         # Game loop for drawing graphics
         self.screen.fill(black)
         self.all_sprites.draw(self.screen)
-        font = pg.font.SysFont('consolas', 30)
-        text = font.render("Press 's' to reset the figure", 5, (255, 0, 0))
-        self.screen.blit(text, (width / 2 - (text.get_width() / 2), height / 2 - (text.get_height() / 2)))
+        self.draw_text(str(self.score), 22, white, width / 2, 50)
+        if self.game_over:
+            self.draw_text('GAME OVER', 26, white, width / 2, height / 2 - 30)
+            self.draw_text('Press ESC to exit the game.', 24, white, width / 2, height / 2)
+            self.draw_text('Press \'r\' to restart the game.', 24, white, width / 2, height / 2 + 30)
+
         # *after* drawing everything, flip the display
         pg.display.flip()
 
@@ -93,6 +109,12 @@ class Game:
         # show game over / continue
         pass
 
+    def draw_text(self, text, size, color, x, y):
+        font = pg.font.Font(self.font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        self.screen.blit(text_surface, text_rect)
 
 g = Game()
 g.show_start_screen()
