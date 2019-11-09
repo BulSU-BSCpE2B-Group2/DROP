@@ -15,11 +15,17 @@ class Game:
         self.running = True
 
     def new(self):
+        # starting a new game
         self.all_sprites = pg.sprite.Group()
-        self.player = Player()
+        self.platforms = pg.sprite.Group()
+        for platform in platform_list:
+            p = Platform(*platform)
+            self.all_sprites.add(p)
+            self.platforms.add(p)
+        self.player = Player(self)
         self.all_sprites.add(self.player)
         self.run()
-        # starting a new game
+
 
     def run(self):
         # Game loop
@@ -30,8 +36,28 @@ class Game:
             self.draw()
 
     def update(self):
-        self.all_sprites.update()
         # game loop update
+        self.all_sprites.update()
+        # check if player hits a platform - only if falling!
+        if self.player.vel.y > 0:
+            hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+            if hits:
+                self.player.pos.y = hits[0].rect.top
+                self.player.vel.y = 0
+        # if player reaches top 1/4 of the screen
+        if self.player.rect.top <= height / 4:
+            self.player.pos.y += abs(self.player.vel.y)
+            for platform in self.platforms:
+                platform.rect.y += abs(self.player.vel.y)
+                if platform.rect.top >= height:
+                    platform.kill()
+
+        # spawn new platforms to keep same average number
+        while len(self.platforms) < 6:
+            wide = random.randrange(50, 100)
+            p = Platform(random.randrange(0, width - wide), random.randrange(-75, -30), wide, 20)
+            self.platforms.add(p)
+            self.all_sprites.add(p)
 
     def events(self):
         # Game loop - EVENTS
@@ -39,6 +65,15 @@ class Game:
             # check for closing window
             if event.type == pg.QUIT:
                 self.running = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    self.player.jump()
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_ESCAPE]:
+            self.running = False
+        """if keys[pg.K_SPACE]:
+            self.player.jump()"""
 
     def draw(self):
         # Game loop for drawing graphics
