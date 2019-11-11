@@ -2,8 +2,8 @@ import itertools
 import pygame as pg
 # game resolution and fps
 title = "Pygame Platformer Test"
-width = 480
-height = 600
+width = 1280
+height = 768
 fps = 60
 font_name = 'consolas'
 

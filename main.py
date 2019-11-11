@@ -9,7 +9,7 @@ class Game:
         # initialize game window, etc.
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((width, height))
+        self.screen = pg.display.set_mode((width, height), pg.FULLSCREEN)
         pg.display.set_caption(title)
         self.clock = pg.time.Clock()
         self.running = True
@@ -26,7 +26,6 @@ class Game:
             p = Platform(*platform)
             self.all_sprites.add(p)
             self.platforms.add(p)
-
         self.player = Player(self)
         self.all_sprites.add(self.player)
         self.run()
@@ -118,6 +117,7 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
+
 
 g = Game()
 g.show_start_screen()
