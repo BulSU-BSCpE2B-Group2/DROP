@@ -2,7 +2,7 @@ import itertools
 import pygame as pg
 # game resolution and fps
 title = "Pygame Platformer Test"
-width = 1280
+width = 800
 height = 768
 fps = 60
 font_name = 'consolas'
@@ -28,5 +28,3 @@ blue = (0, 0, 255)
 yellow = (255, 255, 0)
 dark_red = (125, 0, 0)
 colors = itertools.cycle(['red', 'blue', 'orange', 'purple'])
-
-
