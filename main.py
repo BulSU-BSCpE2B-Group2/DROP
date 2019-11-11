@@ -40,20 +40,23 @@ class Game:
 
     def update(self):
         # game loop update
-        self.all_sprites.update()
+        self.player.update()
+        self.platforms.update()
         # check if player hits a platform - only if falling!
+        for platform in self.platforms:
+            platform.rect.y -= 2
+            if platform.rect.top <= -30:
+                platform.kill()
+
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                self.player.pos.y = hits[0].rect.top
+                self.player.pos.y = hits[0].rect.top - 2
                 self.player.vel.y = 0
         # if player reaches top 1/4 of the screen
         """if self.player.rect.top <= height / 4:
             self.player.pos.y += abs(self.player.vel.y)"""
-        for platform in self.platforms:
-            platform.rect.y -= 3
-            if platform.rect.top <= -30:
-                platform.kill()
+
 
         if self.player.rect.bottom > (height / 4) * 3:
             for sprite in self.all_sprites:
@@ -67,9 +70,13 @@ class Game:
         # spawn new platforms to keep same average number
         while len(self.platforms) < 24:
             wide = random.randrange(50, 100)
-            p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
+            # p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
+            p = Platform(random.randrange(0, width / 4), 120 + height, wide, 20)
+            p1 = Platform(random.randrange(100 + width / 4, width), 120 + height, wide, 20)
             self.platforms.add(p)
+            self.platforms.add(p1)
             self.all_sprites.add(p)
+            self.all_sprites.add(p1)
 
     def events(self):
         # Game loop - EVENTS
@@ -91,7 +98,7 @@ class Game:
     def draw(self):
         # Game loop for drawing graphics
         if not self.game_over:
-            self.screen.fill(black)
+            self.screen.fill(gray)
             self.all_sprites.draw(self.screen)
             self.draw_text(str(self.score), 22, white, width / 2, 50)
         else:

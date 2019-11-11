@@ -12,7 +12,7 @@ player_accel = 0.5
 player_friction = -0.12
 player_width = 30
 player_height = 40
-player_gravity = 0.8
+player_gravity = 1
 player_jump = 20
 
 # list of platforms
@@ -27,6 +27,7 @@ black = (0, 0, 0)
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
+gray = (125, 125, 125)
 yellow = (255, 255, 0)
 dark_red = (125, 0, 0)
 colors = itertools.cycle(['red', 'blue', 'orange', 'purple'])

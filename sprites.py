@@ -44,9 +44,9 @@ class Player(pg.sprite.Sprite):
         self.pos += self.vel + 0.5 * self.accel
         # wrap around the screen
         if self.pos.x > width - (player_width / 2):
-            self.pos.x = player_width / 2
-        if self.pos.x < player_width / 2:
             self.pos.x = width - player_width / 2
+        if self.pos.x < player_width / 2:
+            self.pos.x = player_width / 2
 
         self.rect.midbottom = self.pos
 
