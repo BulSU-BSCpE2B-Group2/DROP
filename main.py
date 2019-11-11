@@ -48,26 +48,26 @@ class Game:
                 self.player.pos.y = hits[0].rect.top
                 self.player.vel.y = 0
         # if player reaches top 1/4 of the screen
-        if self.player.rect.top <= height / 4:
-            self.player.pos.y += abs(self.player.vel.y)
-            for platform in self.platforms:
-                platform.rect.y += abs(self.player.vel.y)
-                if platform.rect.top >= height:
-                    platform.kill()
+        """if self.player.rect.top <= height / 4:
+            self.player.pos.y += abs(self.player.vel.y)"""
+        for platform in self.platforms:
+            platform.rect.y -= 3
+            if platform.rect.top <= -30:
+                platform.kill()
 
-        if self.player.rect.bottom > height:
+        if self.player.rect.bottom > (height / 4) * 3:
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.vel.y, 10)
-                if sprite.rect.bottom < 0:
+                if sprite.rect.bottom < -30:
                     sprite.kill()
 
-        if len(self.platforms) == 0:
+        if self.player.rect.top < 0:
             self.game_over = True
 
         # spawn new platforms to keep same average number
-        while len(self.platforms) < 6:
+        while len(self.platforms) < 24:
             wide = random.randrange(50, 100)
-            p = Platform(random.randrange(0, width - wide), random.randrange(-75, -30), wide, 20)
+            p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
             self.platforms.add(p)
             self.all_sprites.add(p)
 
@@ -77,9 +77,9 @@ class Game:
             # check for closing window
             if event.type == pg.QUIT:
                 self.running = False
-            if event.type == pg.KEYDOWN:
+            """if event.type == pg.KEYDOWN:
                 if event.key == pg.K_UP:
-                    self.player.jump()
+                    self.player.jump()"""
 
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
