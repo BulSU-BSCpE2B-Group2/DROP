@@ -1,2 +1,2 @@
-# PYGAME_2TEST
-This is a copy of the pygame tutorial on youtube.
+# DROP
+Mechanics of the game goes here. Kung sino man makakapag explain edit nyo README.md
