@@ -22,12 +22,13 @@ class Game:
         self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
-        self.player = Player(self)
-        self.all_sprites.add(self.player)
         for platform in platform_list:
             p = Platform(*platform)
             self.all_sprites.add(p)
             self.platforms.add(p)
+
+        self.player = Player(self)
+        self.all_sprites.add(self.player)
         self.run()
 
     def run(self):
@@ -78,7 +79,7 @@ class Game:
             if event.type == pg.QUIT:
                 self.running = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
+                if event.key == pg.K_UP:
                     self.player.jump()
 
         keys = pg.key.get_pressed()
@@ -90,10 +91,12 @@ class Game:
 
     def draw(self):
         # Game loop for drawing graphics
-        self.screen.fill(black)
-        self.all_sprites.draw(self.screen)
-        self.draw_text(str(self.score), 22, white, width / 2, 50)
-        if self.game_over:
+        if not self.game_over:
+            self.screen.fill(black)
+            self.all_sprites.draw(self.screen)
+            self.draw_text(str(self.score), 22, white, width / 2, 50)
+        else:
+            self.screen.fill(dark_red)
             self.draw_text('GAME OVER', 26, white, width / 2, height / 2 - 30)
             self.draw_text('Press ESC to exit the game.', 24, white, width / 2, height / 2)
             self.draw_text('Press \'r\' to restart the game.', 24, white, width / 2, height / 2 + 30)
