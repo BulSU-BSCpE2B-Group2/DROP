@@ -165,38 +165,6 @@ class Game:
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
 
-    def shuffle_platform(self, wide):
-        gaps = random.randint(1, 5)
-        gaps_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
-        if gaps == 1:
-            random.shuffle(gaps_1)
-            self.sequence = gaps_1
-        elif gaps == 2:
-            random.shuffle(gaps_2)
-            self.sequence = gaps_2
-        elif gaps == 3:
-            random.shuffle(gaps_3)
-            self.sequence = gaps_3
-        elif gaps == 4:
-            random.shuffle(gaps_4)
-            self.sequence = gaps_4
-        else:
-            random.shuffle(gaps_2)
-            self.sequence = gaps_2
-        for x in self.sequence:
-            if x == 1:
-                p = Platform(self.orig_pos, 90 + height, width/12, 20)
-                self.all_sprites.add(p)
-                self.platforms.add(p)
-                wide += width/12
-                self.orig_pos += width/12
-            else:
-                self.orig_pos += width/12
-
-
 g = Game()
 g.show_start_screen()
 while g.running:
