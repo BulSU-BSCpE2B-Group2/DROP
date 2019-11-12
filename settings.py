@@ -1,6 +1,5 @@
 import itertools
-import random
-import pygame as pg
+
 # game resolution and fps
 title = "Pygame Platformer Test"
 width = 800
@@ -8,7 +7,7 @@ height = 768
 fps = 60
 font_name = 'consolas'
 
-#Player properties:
+# Player properties:
 player_accel = 0.5
 player_friction = -0.12
 player_width = 30

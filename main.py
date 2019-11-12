@@ -1,3 +1,5 @@
+# Please do not mind the messiness of the code. I am simply a beginner on Pygame and is looking for more experience
+# If you do know how to make the code more efficient I am happy to entertain suggestions.
 import pygame as pg
 import random
 from settings import *
@@ -44,7 +46,9 @@ class Game:
 
     def update(self):
         # game loop update
-        # self.newPlatform += 1
+        # Plan here was to spawn platforms with specific number of gaps
+        # The platforms has to be aligned, and has to have enough room for the ball to fall and navigate through
+
         gaps = random.randint(1, 5)
         gaps_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -73,9 +77,12 @@ class Game:
                 self.orig_pos += width / 12
             else:
                 self.orig_pos += width / 12
+        # ISSUE: Platforms are hollow after the initial pre-placed platforms. Still looking into this issue
+        # Open for suggestions
         self.player.update()
         self.platforms.update()
         self.timePoint = pg.time.get_ticks()
+
         # check if player hits a platform - only if falling!
         for platform in self.platforms:
             platform.rect.y -= 2
@@ -100,8 +107,7 @@ class Game:
         if self.player.rect.top < 0:
             self.game_over = True
 
-        # spawn new platforms to keep same average number
-        # don't mind the temdon't mindgtigtri
+        # Initial plan was to spawn new platforms to keep same average number
         # wide = width / 8
         # p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
         """p = Platform(random.randrange(0, width / 4), 120 + height, wide, 20)
@@ -110,13 +116,6 @@ class Game:
         self.platforms.add(p1)
         self.all_sprites.add(p)
         self.all_sprites.add(p1)"""
-        """platforms_all = self.shuffle_platform(wide)
-        for platform in platforms_all:
-            p = Platform(*platform)
-            self.all_sprites.add(p)
-            self.platforms.add(p)"""
-
-
 
     def events(self):
         # Game loop - EVENTS
@@ -124,9 +123,12 @@ class Game:
             # check for closing window
             if event.type == pg.QUIT:
                 self.running = False
-            """if event.type == pg.KEYDOWN:
-                if event.key == pg.K_UP:
-                    self.player.jump()"""
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.running = False
+                elif event.key == pg.K_r:
+                    self.game_over = False
+                    self.new()
 
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
@@ -170,7 +172,8 @@ class Game:
 g = Game()
 g.show_start_screen()
 while g.running:
-    g.new()
-    g.show_go_screen()
+    if not g.game_over:
+        g.new()
+        g.show_go_screen()
 
 pg.quit()
