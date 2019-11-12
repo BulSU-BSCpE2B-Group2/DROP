@@ -1,9 +1,9 @@
-
+import pygame as pg
 import random
 from settings import *
 from sprites import *
 
-#HELLO MAAM ENA PYGAME HERE
+
 class Game:
     def __init__(self):
         # initialize game window, etc.
@@ -101,7 +101,7 @@ class Game:
             self.game_over = True
 
         # spawn new platforms to keep same average number
-
+        # don't mind the temdon't mindgtigtri
         # wide = width / 8
         # p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
         """p = Platform(random.randrange(0, width / 4), 120 + height, wide, 20)
