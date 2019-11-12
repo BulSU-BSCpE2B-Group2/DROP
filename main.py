@@ -3,7 +3,7 @@ import random
 from settings import *
 from sprites import *
 
-
+#HELLO MAAM ENA PYGAME HERE
 class Game:
     def __init__(self):
         # initialize game window, etc.
