@@ -16,6 +16,10 @@ class Game:
         self.game_over = False
         self.font_name = pg.font.match_font(font_name)
         self.score = 0
+        self.orig_pos = 0
+        self.sequence = []
+        self.newPlatform = 0
+        self.newPlatformInterval = 100
 
     def new(self):
         # starting a new game
@@ -40,8 +44,38 @@ class Game:
 
     def update(self):
         # game loop update
+        # self.newPlatform += 1
+        gaps = random.randint(1, 5)
+        gaps_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+        if gaps == 1:
+            random.shuffle(gaps_1)
+            self.sequence = gaps_1
+        elif gaps == 2:
+            random.shuffle(gaps_2)
+            self.sequence = gaps_2
+        elif gaps == 3:
+            random.shuffle(gaps_3)
+            self.sequence = gaps_3
+        elif gaps == 4:
+            random.shuffle(gaps_4)
+            self.sequence = gaps_4
+        else:
+            random.shuffle(gaps_2)
+            self.sequence = gaps_2
+        for x in self.sequence:
+            if x == 1:
+                p = Platform(self.orig_pos, 90 + height, width / 12, 20)
+                self.all_sprites.add(p)
+                self.platforms.add(p)
+                self.orig_pos += width / 12
+            else:
+                self.orig_pos += width / 12
         self.player.update()
         self.platforms.update()
+        self.timePoint = pg.time.get_ticks()
         # check if player hits a platform - only if falling!
         for platform in self.platforms:
             platform.rect.y -= 2
@@ -57,26 +91,32 @@ class Game:
         """if self.player.rect.top <= height / 4:
             self.player.pos.y += abs(self.player.vel.y)"""
 
-
-        if self.player.rect.bottom > (height / 4) * 3:
+        """if self.player.rect.bottom > (height / 4) * 3:
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.vel.y, 10)
                 if sprite.rect.bottom < -30:
-                    sprite.kill()
+                    sprite.kill()"""
 
         if self.player.rect.top < 0:
             self.game_over = True
 
         # spawn new platforms to keep same average number
-        while len(self.platforms) < 24:
-            wide = random.randrange(50, 100)
-            # p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
-            p = Platform(random.randrange(0, width / 4), 120 + height, wide, 20)
-            p1 = Platform(random.randrange(100 + width / 4, width), 120 + height, wide, 20)
-            self.platforms.add(p)
-            self.platforms.add(p1)
+
+        # wide = width / 8
+        # p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
+        """p = Platform(random.randrange(0, width / 4), 120 + height, wide, 20)
+        p1 = Platform(random.randrange(100 + width / 4, width), 120 + height, wide, 20)
+        self.platforms.add(p)
+        self.platforms.add(p1)
+        self.all_sprites.add(p)
+        self.all_sprites.add(p1)"""
+        """platforms_all = self.shuffle_platform(wide)
+        for platform in platforms_all:
+            p = Platform(*platform)
             self.all_sprites.add(p)
-            self.all_sprites.add(p1)
+            self.platforms.add(p)"""
+
+
 
     def events(self):
         # Game loop - EVENTS
@@ -124,6 +164,37 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
+
+    def shuffle_platform(self, wide):
+        gaps = random.randint(1, 5)
+        gaps_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+        if gaps == 1:
+            random.shuffle(gaps_1)
+            self.sequence = gaps_1
+        elif gaps == 2:
+            random.shuffle(gaps_2)
+            self.sequence = gaps_2
+        elif gaps == 3:
+            random.shuffle(gaps_3)
+            self.sequence = gaps_3
+        elif gaps == 4:
+            random.shuffle(gaps_4)
+            self.sequence = gaps_4
+        else:
+            random.shuffle(gaps_2)
+            self.sequence = gaps_2
+        for x in self.sequence:
+            if x == 1:
+                p = Platform(self.orig_pos, 90 + height, width/12, 20)
+                self.all_sprites.add(p)
+                self.platforms.add(p)
+                wide += width/12
+                self.orig_pos += width/12
+            else:
+                self.orig_pos += width/12
 
 
 g = Game()

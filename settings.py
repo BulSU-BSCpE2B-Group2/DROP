@@ -1,4 +1,5 @@
 import itertools
+import random
 import pygame as pg
 # game resolution and fps
 title = "Pygame Platformer Test"
@@ -18,6 +19,7 @@ player_jump = 20
 # list of platforms
 platform_list = [(width / 2 - 50, height * 3 / 4, 100, 20), (125, height - 350, 100, 20),
                  (350, 200, 100, 20), (172, 100, 50, 20)]
+
 
 # temporary (0, height - 40, width, 40),
 
