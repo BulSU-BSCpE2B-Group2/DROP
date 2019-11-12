@@ -1,2 +1,3 @@
 # DROP
-Mechanics of the game goes here. Kung sino man makakapag explain edit nyo README.md
+The ball has to go down the platforms that are constantly moving upwards.
+Graphics and sounds are still being made.
