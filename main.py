@@ -11,7 +11,7 @@ class Game:
         # initialize game window, etc.
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((width, height)) # add pg.FULLSCREEN if you want to full screen
+        self.screen = pg.display.set_mode((WIDTH, height)) # add pg.FULLSCREEN if you want to full screen
         pg.display.set_caption(title)
         self.clock = pg.time.Clock()
         self.running = True
@@ -20,8 +20,9 @@ class Game:
         self.score = 0
         self.orig_pos = 0
         self.newPlatform = 90 + height
-        self.newPlatformInterval = 100
+        self.newPlatformInterval = 75
         self.currentInterval = 0
+        self.newwidth = WIDTH
 
     def new(self):
         # starting a new game
@@ -51,27 +52,29 @@ class Game:
         # ISSUE: Platforms are hollow after the initial pre-placed platforms. Still looking into this issue
         # Open for suggestions
         self.gaps = random.randint(1, 5)
-        # self.currentInterval += 1
-        self.add_platform(self.gaps)
+        self.currentInterval += 1
+        if self.currentInterval > self.newPlatformInterval:
+            self.add_platform(self.gaps)
+            self.currentInterval = 0
         self.player.update()
         self.platforms.update()
 
         # check if player hits a platform - only if falling!
         for platform in self.platforms:
-            platform.rect.y -= 2
+            platform.rect.y -= speed
             if platform.rect.top <= -20:
                 platform.kill()
 
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                self.player.pos.y = hits[0].rect.top - 2
+                self.player.pos.y = hits[0].rect.top - speed
                 self.player.vel.y = 0
-        # if player reaches top 1/4 of the screen
-        """if self.player.rect.top <= height / 4:
-            self.player.pos.y += abs(self.player.vel.y)"""
 
+        # if player reaches 1/4 from the bottom of the screen
         if self.player.rect.bottom > (height / 4) * 3:
+            self.score += 1
+            self.currentInterval += 10
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.vel.y, 10)
                 if sprite.rect.bottom < 10:
@@ -100,14 +103,16 @@ class Game:
         else:
             random.shuffle(gaps_2)
             sequence = gaps_2
+
+        rect = pg.Rect(0, 0, WIDTH / 12, height * 2)
         for x in sequence:
             if x == 1:
-                p = Platform(self.orig_pos, self.newPlatform, width / 12, 20)
+                p = Platform(rect.center, (67, 20))
                 self.platforms.add(p)
                 self.all_sprites.add(p)
-                self.orig_pos += width / 12
+                rect.width += 134
             else:
-                self.orig_pos += width / 12
+                rect.width += 134
 
         # Initial plan was to spawn new platforms to keep same average number
         # wide = width / 8
@@ -145,7 +150,7 @@ class Game:
         if not self.game_over:
             self.screen.fill(gray)
             self.all_sprites.draw(self.screen)
-            self.draw_text(str(self.score), 22, white, width / 2, 50)
+            self.draw_text(str(self.score), 22, white, WIDTH / 2, 50)
         else:
             self.show_go_screen()
 
@@ -155,8 +160,8 @@ class Game:
     def show_start_screen(self):
         # show splash / start screen
         self.screen.fill(pg.color.Color('purple'))
-        self.draw_text('Welcome to DROP!', 30, white, width/2, height/3)
-        self.draw_text('Press RETURN to start the game!', 25, white, width/2, height/2)
+        self.draw_text('Welcome to DROP!', 30, white, WIDTH / 2, height / 3)
+        self.draw_text('Press RETURN to start the game!', 25, white, WIDTH / 2, height / 2)
         pg.display.flip()
         self.wait_key_event()
 
@@ -175,9 +180,9 @@ class Game:
     def show_go_screen(self):
         # show game over / continue
         self.screen.fill(dark_red)
-        self.draw_text('GAME OVER', 26, white, width / 2, height / 2 - 30)
-        self.draw_text('Press ESC to exit the game.', 24, white, width / 2, height / 2)
-        self.draw_text('Press \'r\' to restart the game.', 24, white, width / 2, height / 2 + 30)
+        self.draw_text('GAME OVER', 26, white, WIDTH / 2, height / 2 - 30)
+        self.draw_text('Press ESC to exit the game.', 24, white, WIDTH / 2, height / 2)
+        self.draw_text('Press \'r\' to restart the game.', 24, white, WIDTH / 2, height / 2 + 30)
         pg.display.flip()
 
     def draw_text(self, text, size, color, x, y):

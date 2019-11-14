@@ -2,10 +2,15 @@ import itertools
 
 # game resolution and fps
 title = "Pygame Platformer Test"
-width = 800
+WIDTH = 800
 height = 768
 fps = 60
 font_name = 'consolas'
+multiplier = 1
+multiplier += 0.008
+speed = 2 * multiplier
+if speed == 3:
+    multiplier = 1
 
 # Player properties:
 player_accel = 0.5
@@ -16,8 +21,10 @@ player_gravity = 1
 player_jump = 20
 
 # list of platforms
-platform_list = [(width / 2 - 50, height * 3 / 4, 100, 20), (125, height - 350, 100, 20),
-                 (350, 200, 100, 20), (172, 100, 50, 20)]
+platform_list = [((WIDTH / 2 - 50, height * 3 / 4), (100, 20)), ((125, height - 350), (100, 20)),
+                 ((350, 200), (100, 20)), ((172, 100), (50, 20))]
+
+gaps_1 = [()]
 
 
 # temporary (0, height - 40, width, 40),

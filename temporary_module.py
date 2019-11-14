@@ -31,12 +31,12 @@ def shuffle_platform():
         self.sequence = gaps_2
     for x in self.sequence:
         if x == 1:
-            p = Platform(self.orig_pos, 90 + height, width / 12, 20)
+            p = Platform(self.orig_pos, 90 + height, WIDTH / 12, 20)
             self.all_sprites.add(p)
             self.platforms.add(p)
-            self.orig_pos += width / 12
+            self.orig_pos += WIDTH / 12
         else:
-            self.orig_pos += width / 12
+            self.orig_pos += WIDTH / 12
 
 """ UNUSED CODE. MIGHT BE USED IN THE NEAR FUTURE
 platforms_all = self.shuffle_platform(wide)

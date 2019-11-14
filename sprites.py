@@ -10,8 +10,8 @@ class Player(pg.sprite.Sprite):
         self.game = game
         self.image = pg.Surface((player_width, player_height))
         self.rect = self.image.get_rect()
-        self.rect.center = (width / 2, height / 2)
-        self.pos = vec(width / 2, height / 2)
+        self.rect.center = (WIDTH / 2, height / 2)
+        self.pos = vec(WIDTH / 2, height / 2)
         self.vel = vec(0, 0)
         self.accel = vec(0, 0)
         self.cc_step = 1
@@ -43,8 +43,8 @@ class Player(pg.sprite.Sprite):
         self.vel += self.accel
         self.pos += self.vel + 0.5 * self.accel
         # wrap around the screen
-        if self.pos.x > width - (player_width / 2):
-            self.pos.x = width - player_width / 2
+        if self.pos.x > WIDTH - (player_width / 2):
+            self.pos.x = WIDTH - player_width / 2
         if self.pos.x < player_width / 2:
             self.pos.x = player_width / 2
 
@@ -69,13 +69,14 @@ class Player(pg.sprite.Sprite):
 
 
 class Platform(pg.sprite.Sprite):
-    def __init__(self, x, y, w, h):
+    def __init__(self, position, dimensions):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((w, h))
+        self.image = pg.Surface(dimensions)
         self.image.fill(green)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.position = position
+        self.rect.center = self.position
+
 
 
 
