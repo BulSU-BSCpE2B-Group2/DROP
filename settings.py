@@ -6,15 +6,11 @@ WIDTH = 800
 height = 768
 fps = 60
 font_name = 'consolas'
-multiplier = 1
-multiplier += 0.008
-speed = 2 * multiplier
-if speed == 3:
-    multiplier = 1
+
 
 # Player properties:
 player_accel = 0.5
-player_friction = -0.12
+player_friction = -0.08
 player_width = 30
 player_height = 40
 player_gravity = 1

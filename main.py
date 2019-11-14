@@ -20,9 +20,10 @@ class Game:
         self.score = 0
         self.orig_pos = 0
         self.newPlatform = 90 + height
-        self.newPlatformInterval = 75
+        self.newPlatformInterval = 50
         self.currentInterval = 0
         self.newwidth = WIDTH
+        self.multiplier = 1
 
     def new(self):
         # starting a new game
@@ -50,10 +51,13 @@ class Game:
         # Plan here was to spawn platforms with specific number of gaps
         # The platforms has to be aligned, and has to have enough room for the ball to fall and navigate through
         # ISSUE: Platforms are hollow after the initial pre-placed platforms. Still looking into this issue
-        # Open for suggestions
-        self.gaps = random.randint(1, 5)
+        self.multiplier += 0.001
+        speed = 2 * self.multiplier
+        if speed > 5:
+            self.multiplier = 1
+        self.gaps = random.randint(1, 6)
         self.currentInterval += 1
-        if self.currentInterval > self.newPlatformInterval:
+        if self.currentInterval + speed > self.newPlatformInterval:
             self.add_platform(self.gaps)
             self.currentInterval = 0
         self.player.update()
@@ -74,7 +78,7 @@ class Game:
         # if player reaches 1/4 from the bottom of the screen
         if self.player.rect.bottom > (height / 4) * 3:
             self.score += 1
-            self.currentInterval += 10
+            self.currentInterval += 4
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.vel.y, 10)
                 if sprite.rect.bottom < 10:
@@ -84,7 +88,7 @@ class Game:
             self.game_over = True
 
     def add_platform(self, gaps):
-        gaps_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        gaps_1 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
