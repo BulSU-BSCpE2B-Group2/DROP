@@ -22,8 +22,13 @@ class Game:
         self.newPlatform = 90 + height
         self.newPlatformInterval = 50
         self.currentInterval = 0
-        self.newwidth = WIDTH
+        self.newwidth = self.width_loop = WIDTH
+        self.newheight = self.height_loop = height
         self.multiplier = 1
+        self.player_width = player_width
+        self.player_height = player_height
+        self.animax = 0
+        self.animay = 0
 
     def new(self):
         # starting a new game
@@ -163,6 +168,27 @@ class Game:
 
     def show_start_screen(self):
         # show splash / start screen
+        self.wait_key_event()
+        rsg, rsg_text = ['red', 'yellow', 'green'], ['READY', 'SET', 'DROP!']
+        rsg_count = 0
+        while rsg_count < len(rsg):
+            self.screen.fill(pg.color.Color(rsg[rsg_count]))
+            self.draw_text(rsg_text[rsg_count], 125, white, WIDTH / 2, height / 2)
+            pg.display.flip()
+            pg.time.wait(1000)
+            rsg_count += 1
+
+        while self.width_loop > self.player_width and self.height_loop > self.player_height:
+            self.screen.fill(gray)
+            pg.draw.rect(self.screen, green, [self.animax, self.animay, self.width_loop, self.height_loop])
+            pg.display.flip()
+            pg.time.wait(50)
+            self.width_loop -= 22;
+            self.height_loop -= 20;
+            if self.animax < self.newwidth / 2.10 and self.animay < self.newheight / 2.25:
+                self.animax += 11;
+                self.animay += 10
+
         self.screen.fill(pg.color.Color('purple'))
         self.draw_text('Welcome to DROP!', 30, white, WIDTH / 2, height / 3)
         self.draw_text('Press RETURN to start the game!', 25, white, WIDTH / 2, height / 2)

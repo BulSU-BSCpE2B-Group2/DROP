@@ -5,7 +5,7 @@ title = "Pygame Platformer Test"
 WIDTH = 800
 height = 768
 fps = 60
-font_name = 'consolas'
+font_name = 'courier'
 
 
 # Player properties:
