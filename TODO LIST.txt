@@ -5,12 +5,23 @@ TODO LIST:
             - 8 bit themed, can be grass or stone or should depend on what the current background is
         2.) BACKGROUND SIZE: 800 X 1536 PIXELS
             - Different backgrounds can be made
-                > Sunny, night time, afternoon, etc.
+                > Sunny, night time, afternoon, etc
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
     SOUNDS:
         FOR SOUND EFFECTS, PLEASE CONVERT IT TO .wav FORMAT
         FOR BACKGROUND MUSIC, IT SHOULD BE .mp3
-        Sounds are required for the following:
-        1.) Background music for Main menu
-        2.) Background music for Actual game
-        3.) -- wait lang
+        ===========================================================================
+        Background music is required for the following:
+        1.) Main menu
+        2.) Actual game
+        3.) Settings menu (if we're going to put Character Selection menu)
+        ===========================================================================
+        Sound effects is requirede for the following:
+        1.) Opening sound
+        2.) Button selected
+        3.) Button hovered
+        4.) Hitting the ground/platform sound
+        5.) Hurt sound (if the player dies from the spikes)
+        6.) -- more to be added.
+        
 
