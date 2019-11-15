@@ -1,5 +1,3 @@
-# Please do not mind the messiness of the code. I am simply a beginner on Pygame and is looking for more experience
-# If you do know how to make the code more efficient I am happy to entertain suggestions.
 import pygame as pg
 import random
 from os import path
