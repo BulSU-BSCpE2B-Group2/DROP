@@ -6,7 +6,7 @@ WIDTH = 800
 height = 768
 fps = 60
 font_name = 'courier'
-
+highscore_textfile = 'highscore.txt'
 
 # Player properties:
 player_accel = 0.5

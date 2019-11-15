@@ -1,6 +1,8 @@
 # Sprite classes for platform game
 import pygame as pg
+import random
 from settings import *
+
 vec = pg.math.Vector2
 
 
@@ -77,6 +79,30 @@ class Platform(pg.sprite.Sprite):
         self.position = position
         self.rect.center = self.position
 
+
+def add_platform(gaps):
+    gaps_1 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+    if gaps == 1:
+        random.shuffle(gaps_1)
+        sequence = gaps_1
+    elif gaps == 2:
+        random.shuffle(gaps_2)
+        sequence = gaps_2
+    elif gaps == 3:
+        random.shuffle(gaps_3)
+        sequence = gaps_3
+    elif gaps == 4:
+        random.shuffle(gaps_4)
+        sequence = gaps_4
+    else:
+        random.shuffle(gaps_2)
+        sequence = gaps_2
+
+    rect = pg.Rect(0, 0, WIDTH / 12, height * 2)
+    return sequence, rect
 
 
 

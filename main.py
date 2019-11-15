@@ -2,6 +2,7 @@
 # If you do know how to make the code more efficient I am happy to entertain suggestions.
 import pygame as pg
 import random
+from os import path
 from settings import *
 from sprites import *
 
@@ -11,7 +12,7 @@ class Game:
         # initialize game window, etc.
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, height)) # add pg.FULLSCREEN if you want to full screen
+        self.screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN) # add pg.FULLSCREEN if you want to full screen
         pg.display.set_caption(title)
         self.clock = pg.time.Clock()
         self.running = True
@@ -29,6 +30,16 @@ class Game:
         self.player_height = player_height
         self.animax = 0
         self.animay = 0
+        self.load_hs_data()
+
+    def load_hs_data(self):
+        # read high score from highscore.txt
+        self.dir = path.dirname(__file__)
+        with open(path.join(self.dir, highscore_textfile), 'w') as f:
+            try:
+                self.highscore = int(f.read())
+            except:
+                self.highscore = 0
 
     def new(self):
         # starting a new game
@@ -62,8 +73,16 @@ class Game:
             self.multiplier = 1
         self.gaps = random.randint(1, 6)
         self.currentInterval += 1
-        if self.currentInterval + speed > self.newPlatformInterval:
-            self.add_platform(self.gaps)
+        if self.currentInterval * self.multiplier > self.newPlatformInterval:
+            sequence, rect = add_platform(self.gaps)
+            for x in sequence:
+                if x == 1:
+                    p = Platform(rect.center, (67, 20))
+                    self.platforms.add(p)
+                    self.all_sprites.add(p)
+                    rect.width += 134
+                else:
+                    rect.width += 134
             self.currentInterval = 0
         self.player.update()
         self.platforms.update()
@@ -91,47 +110,6 @@ class Game:
 
         if self.player.rect.top < 0:
             self.game_over = True
-
-    def add_platform(self, gaps):
-        gaps_1 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
-        if gaps == 1:
-            random.shuffle(gaps_1)
-            sequence = gaps_1
-        elif gaps == 2:
-            random.shuffle(gaps_2)
-            sequence = gaps_2
-        elif gaps == 3:
-            random.shuffle(gaps_3)
-            sequence = gaps_3
-        elif gaps == 4:
-            random.shuffle(gaps_4)
-            sequence = gaps_4
-        else:
-            random.shuffle(gaps_2)
-            sequence = gaps_2
-
-        rect = pg.Rect(0, 0, WIDTH / 12, height * 2)
-        for x in sequence:
-            if x == 1:
-                p = Platform(rect.center, (67, 20))
-                self.platforms.add(p)
-                self.all_sprites.add(p)
-                rect.width += 134
-            else:
-                rect.width += 134
-
-        # Initial plan was to spawn new platforms to keep same average number
-        # wide = width / 8
-        # p = Platform(random.randrange(0, width - wide), random.randrange(120 + height, 350 + width), wide, 20)
-        """p = Platform(random.randrange(0, width / 4), 120 + height, wide, 20)
-        p1 = Platform(random.randrange(100 + width / 4, width), 120 + height, wide, 20)
-        self.platforms.add(p)
-        self.platforms.add(p1)
-        self.all_sprites.add(p)
-        self.all_sprites.add(p1)"""
 
     def events(self):
         # Game loop - EVENTS
@@ -168,14 +146,13 @@ class Game:
 
     def show_start_screen(self):
         # show splash / start screen
-        self.wait_key_event()
         rsg, rsg_text = ['red', 'yellow', 'green'], ['READY', 'SET', 'DROP!']
         rsg_count = 0
         while rsg_count < len(rsg):
             self.screen.fill(pg.color.Color(rsg[rsg_count]))
-            self.draw_text(rsg_text[rsg_count], 125, white, WIDTH / 2, height / 2)
+            self.draw_text(rsg_text[rsg_count], 125, white, WIDTH / 2, height / 2 - 30)
             pg.display.flip()
-            pg.time.wait(1000)
+            pg.time.wait(500)
             rsg_count += 1
 
         while self.width_loop > self.player_width and self.height_loop > self.player_height:
@@ -183,15 +160,16 @@ class Game:
             pg.draw.rect(self.screen, green, [self.animax, self.animay, self.width_loop, self.height_loop])
             pg.display.flip()
             pg.time.wait(50)
-            self.width_loop -= 22;
-            self.height_loop -= 20;
+            self.width_loop -= 22
+            self.height_loop -= 20
             if self.animax < self.newwidth / 2.10 and self.animay < self.newheight / 2.25:
-                self.animax += 11;
+                self.animax += 11
                 self.animay += 10
 
         self.screen.fill(pg.color.Color('purple'))
         self.draw_text('Welcome to DROP!', 30, white, WIDTH / 2, height / 3)
         self.draw_text('Press RETURN to start the game!', 25, white, WIDTH / 2, height / 2)
+        self.draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 30)
         pg.display.flip()
         self.wait_key_event()
 
@@ -206,6 +184,9 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         waiting = False
+                    if event.key == pg.K_ESCAPE:
+                        waiting = False
+                        self.running = False
 
     def show_go_screen(self):
         # show game over / continue
@@ -213,6 +194,13 @@ class Game:
         self.draw_text('GAME OVER', 26, white, WIDTH / 2, height / 2 - 30)
         self.draw_text('Press ESC to exit the game.', 24, white, WIDTH / 2, height / 2)
         self.draw_text('Press \'r\' to restart the game.', 24, white, WIDTH / 2, height / 2 + 30)
+        if self.score > self.highscore:
+            self.highscore = self.score
+            self.draw_text('New high score!', 30, white, WIDTH / 2, height / 2 + 70)
+            with open(path.join(self.dir, highscore_textfile), 'w') as f:
+                f.write(str(self.score))
+        else:
+            self.draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 70)
         pg.display.flip()
 
     def draw_text(self, text, size, color, x, y):
