@@ -18,19 +18,8 @@ class Game:
         self.running = True
         self.game_over = False
         self.font_name = pg.font.match_font(font_name)
-        self.score = 0
-        self.orig_pos = 0
-        self.newPlatform = 90 + height
         self.newPlatformInterval = 50
         self.currentInterval = 0
-        self.newwidth = self.width_loop = WIDTH
-        self.newheight = self.height_loop = height
-        self.multiplier = 1
-
-        self.player_width = player_width
-        self.player_height = player_height
-        self.animax = 0
-        self.animay = 0
         self.load_hs_data()
         self.delay = pg.time.Clock()
 
@@ -46,7 +35,7 @@ class Game:
     def new(self):
         # starting a new game
         self.score = 0
-
+        self.multiplier = 1
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         for platform in platform_list:
@@ -67,10 +56,8 @@ class Game:
 
     def update(self):
         # game loop update
-        # Plan here was to spawn platforms with specific number of gaps
-        # The platforms has to be aligned, and has to have enough room for the ball to fall and navigate through
-        # ISSUE: Platforms are hollow after the initial pre-placed platforms. Still looking into this issue
         self.multiplier += 0.001
+        self.score += 1
         speed = 2 * self.multiplier
         if speed > 5:
             self.multiplier = 1
@@ -122,18 +109,11 @@ class Game:
                 self.running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    self.running = False
+                    self.show_start_screen()
                 elif event.key == pg.K_r:
                     self.game_over = False
                     self.platforms.empty()
                     self.new()
-
-        keys = pg.key.get_pressed()
-        if keys[pg.K_ESCAPE]:
-            self.running = False
-        if keys[pg.K_r]:
-            self.game_over = False
-            self.new()
 
     def draw(self):
         # Game loop for drawing graphics
@@ -149,20 +129,24 @@ class Game:
 
     def show_start_screen(self):
         # show splash / start screen
+        self.newwidth = self.width_loop = WIDTH
+        self.newheight = self.height_loop = height
+        self.animax = 0
+        self.animay = 0
         rsg, rsg_text = ['red', 'yellow', 'green'], ['READY', 'SET', 'DROP!']
         rsg_count = 0
         while rsg_count < len(rsg):
             self.screen.fill(pg.color.Color(rsg[rsg_count]))
             self.draw_text(rsg_text[rsg_count], 125, white, WIDTH / 2, height / 2 - 30)
             pg.display.flip()
-            self.delay.tick(2)
+            pg.time.wait(500)
             rsg_count += 1
 
-        while self.width_loop > self.player_width and self.height_loop > self.player_height:
+        while self.width_loop > player_width and self.height_loop > player_height:
             self.screen.fill(gray)
-            pg.draw.rect(self.screen, red, [self.animax, self.animay, self.width_loop, self.height_loop])
+            pg.draw.rect(self.screen, green, [self.animax, self.animay, self.width_loop, self.height_loop])
             pg.display.flip()
-            self.delay.tick(30)
+            pg.time.wait(50)
             self.width_loop -= 22
             self.height_loop -= 20
             if self.animax < self.newwidth / 2.10 and self.animay < self.newheight / 2.25:
@@ -173,6 +157,7 @@ class Game:
         self.screen.fill(pg.color.Color('purple'))
         self.draw_text('Welcome to DROP!', 30, white, WIDTH / 2, height / 3)
         self.draw_text('Press RETURN to start the game!', 25, white, WIDTH / 2, height / 2)
+        self.draw_text('Press ESC to exit.', 25, white, WIDTH / 2, height / 2 + 70)
         self.draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 30)
         pg.display.flip()
         self.wait_key_event()
@@ -240,8 +225,8 @@ class Game:
             self.update()
             self.draw()
 
-
         pg.display.flip()
+
 
 g = Game()
 g.show_start_screen()
