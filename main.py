@@ -26,11 +26,13 @@ class Game:
         self.newwidth = self.width_loop = WIDTH
         self.newheight = self.height_loop = height
         self.multiplier = 1
+
         self.player_width = player_width
         self.player_height = player_height
         self.animax = 0
         self.animay = 0
         self.load_hs_data()
+        self.delay = pg.time.Clock()
 
     def load_hs_data(self):
         # read high score from highscore.txt
@@ -44,6 +46,7 @@ class Game:
     def new(self):
         # starting a new game
         self.score = 0
+
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         for platform in platform_list:
@@ -152,20 +155,21 @@ class Game:
             self.screen.fill(pg.color.Color(rsg[rsg_count]))
             self.draw_text(rsg_text[rsg_count], 125, white, WIDTH / 2, height / 2 - 30)
             pg.display.flip()
-            pg.time.wait(500)
+            self.delay.tick(2)
             rsg_count += 1
 
         while self.width_loop > self.player_width and self.height_loop > self.player_height:
             self.screen.fill(gray)
-            pg.draw.rect(self.screen, green, [self.animax, self.animay, self.width_loop, self.height_loop])
+            pg.draw.rect(self.screen, red, [self.animax, self.animay, self.width_loop, self.height_loop])
             pg.display.flip()
-            pg.time.wait(50)
+            self.delay.tick(30)
             self.width_loop -= 22
             self.height_loop -= 20
             if self.animax < self.newwidth / 2.10 and self.animay < self.newheight / 2.25:
                 self.animax += 11
                 self.animay += 10
 
+        #self.intrun() #sampleplay...too hard:(
         self.screen.fill(pg.color.Color('purple'))
         self.draw_text('Welcome to DROP!', 30, white, WIDTH / 2, height / 3)
         self.draw_text('Press RETURN to start the game!', 25, white, WIDTH / 2, height / 2)
@@ -211,6 +215,33 @@ class Game:
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
 
+    def intrun(self):
+        self.score = 0
+
+        self.all_sprites = pg.sprite.Group()
+        self.platforms = pg.sprite.Group()
+        for platform in platform_list:
+            p = Platform(*platform)
+            self.all_sprites.add(p)
+            self.platforms.add(p)
+        self.player = Player(self)
+        self.all_sprites.add(self.player)
+
+        while self.running:
+            if self.score < 20:
+                pass
+                #automove
+            else:
+                # fadeout
+                break
+
+            self.clock.tick(fps)
+            self.events()
+            self.update()
+            self.draw()
+
+
+        pg.display.flip()
 
 g = Game()
 g.show_start_screen()
