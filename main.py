@@ -10,7 +10,7 @@ class Game:
         # initialize game window, etc.
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN) # add pg.FULLSCREEN if you want to full screen
+        self.screen = pg.display.set_mode((WIDTH, height)) # add pg.FULLSCREEN if you want to full screen
         pg.display.set_caption(title)
         self.clock = pg.time.Clock()
         self.running = True
@@ -54,10 +54,10 @@ class Game:
 
     def update(self):
         # game loop update
-        self.multiplier += 0.001
+        self.multiplier += 0.0001
         self.score += 1
         speed = 2 * self.multiplier
-        if speed > 5:
+        if speed > 4:
             self.multiplier = 1
         self.gaps = random.randint(1, 6)
         self.currentInterval += 1

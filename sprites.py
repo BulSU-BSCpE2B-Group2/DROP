@@ -101,7 +101,7 @@ def add_platform(gaps):
         random.shuffle(gaps_2)
         sequence = gaps_2
 
-    rect = pg.Rect(0, 0, WIDTH / 12, height * 2)
+    rect = pg.Rect(0, 0, WIDTH / 12, height * 5)
     return sequence, rect
 
 
