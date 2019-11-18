@@ -3,7 +3,7 @@ import random
 from os import path
 from settings import *
 from sprites import *
-import start_screen
+from start_screen import *
 
 
 class Game:
@@ -17,6 +17,7 @@ class Game:
         self.newPlatformInterval = 50
         self.currentInterval = 0
         self.highscore = load_hs_data()
+        self.running = running
 
     def new(self):
         # starting a new game
@@ -34,7 +35,7 @@ class Game:
 
     def run(self):
         # Game loop
-        while start_screen.running:
+        while self.running:
             clock.tick(fps)
             self.events()
             self.update()
@@ -92,7 +93,7 @@ class Game:
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.QUIT:
-                start_screen.running = False
+                self.running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.game_over = True
@@ -122,12 +123,12 @@ class Game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pause = False
-                    start_screen.running = False
+                    self.running = False
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         pause = False
                     if event.key == pg.K_ESCAPE:
-                        start_screen.running = False
+                        self.running = False
 
     def show_go_screen(self):
         # show game over / continue
@@ -143,11 +144,11 @@ class Game:
         else:
             draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 70)
         pg.display.flip()
-        start_screen.wait_key_event_start_screen()
+        self.running = wait_key_event_start_screen()
 
 g = Game()
-start_screen.show_start_screen()
-while start_screen.running:
+running = show_start_screen()
+while running and g.running:
     g.new()
 if g.game_over:
     g.show_go_screen()

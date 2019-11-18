@@ -1,7 +1,6 @@
 from settings import *
 import pygame as pg
-
-running = True
+import __init__ as init
 
 def show_start_screen():
     # show splash / start screen
@@ -27,27 +26,28 @@ def show_start_screen():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
-                return running
-            elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    pass
+                if not running:
+                    return running
         pg.display.flip()
-    wait_key_event_start_screen()
+    running = wait_key_event_start_screen()
+    return running
 
 
 def start_screen_animation(width, height, color, c_text, times):
     fade = pg.Surface((width, height))
     fade.fill((0, 0, 0))
-    draw_text(text_at_start[times], 65, white, 500 / 2, 500 / 2)
+    draw_text(text_at_start[times], 65, white, WIDTH / 2, height / 2)
     for alpha in range(0, 255):
         fade.set_alpha(alpha)
         screen.fill((color))
-        draw_text(text_at_start[times], 65, c_text, 500 / 2, 500 / 2)
+        draw_text(text_at_start[times], 65, c_text, WIDTH / 2, height / 2)
         screen.blit(fade, (0, 0))
         pg.display.flip()
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
+                if not running:
+                    return running
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     pass
@@ -61,12 +61,19 @@ def wait_key_event_start_screen():
             if event.type == pg.QUIT:
                 waiting = False
                 running = False
+                if not running:
+                    return running
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_RETURN:
                     waiting = False
+                    running = True
+                    if running:
+                        return running
                 if event.key == pg.K_ESCAPE:
                     waiting = False
                     running = False
+                    if not running:
+                        return running
 
 """try:
     running = True

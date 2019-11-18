@@ -21,13 +21,14 @@ def draw_text(text, size, color, x, y):
 
 
 # game resolution and fps
+running = True
 title = "Pygame Platformer Test"
 WIDTH = 800
 height = 768
 fps = 60
 font_style = 'courier'
 highscore_textfile = 'highscore.txt'
-screen = pg.display.set_mode((WIDTH, height))
+screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
 clock = pg.time.Clock()
 font_name = pg.font.match_font(font_style)
 

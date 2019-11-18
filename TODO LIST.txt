@@ -1,4 +1,8 @@
 TODO LIST:
+    CORE LOGIC:
+    1.) GAME OVER SCREEN, move it to another module
+    2.) Make a new event function specifically for game over module
+    3.) Hook it to the main script
     GRAPHICS DESIGN:
         (FORMAT AY WIDTH X HEIGHT)
         1.) PLATFORM SIZE: 85 X 20 PIXELS
@@ -6,7 +10,6 @@ TODO LIST:
         2.) BACKGROUND SIZE: 800 X 1536 PIXELS
             - Different backgrounds can be made
                 > Sunny, night time, afternoon, etc
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
     SOUNDS:
         FOR SOUND EFFECTS, PLEASE CONVERT IT TO .wav FORMAT
         FOR BACKGROUND MUSIC, IT SHOULD BE .mp3
