@@ -1,6 +1,5 @@
 from settings import *
 import pygame as pg
-import __init__ as init
 
 def show_start_screen():
     # show splash / start screen
