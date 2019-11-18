@@ -70,9 +70,22 @@ try:
             new_screen = pg.Surface((500, 500))
             new_screen.fill((255, 255, 255))
             new_screen.set_alpha(255)
-            screen.blit(new_screen, (0, 0))
-            draw_text('DROP!', 65, black, 250, 250)
-            draw_text('Main menu should go here.', 50, black, 250, 300)
+            # screen.blit(new_screen, (0, 0))
+            for alpha in range(0, 255):
+                new_screen.set_alpha(255 - alpha)
+                draw_text('DROP!', 65, black, 250, 250)
+                draw_text('Main menu should go here.', 25, black, 250, 350)
+                draw_text('FLASH SHOULD HAPPEN', 20, black, 250, 100)
+                draw_text('BEFORE THIS MENU SHOWS UP', 20, black, 250, 150)
+                screen.blit(new_screen, (0, 0))
+                pg.display.flip()
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        pg.quit()
+                    elif event.type == pg.KEYDOWN:
+                        if event.key == pg.K_ESCAPE:
+                            pg.quit()
+
             pg.display.flip()
         else:
             screen.fill((255, 255, 255))
