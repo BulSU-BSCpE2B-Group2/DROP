@@ -4,6 +4,7 @@ from os import path
 from settings import *
 from sprites import *
 from start_screen import *
+from game_over_screen import *
 
 
 class Game:
@@ -111,7 +112,7 @@ class Game:
             self.all_sprites.draw(self.screen)
             draw_text(str(self.score), 22, white, WIDTH / 2, 50)
         else:
-            self.show_go_screen()
+            self.running = False
 
         # *after* drawing everything, flip the display
         pg.display.flip()
@@ -130,26 +131,14 @@ class Game:
                     if event.key == pg.K_ESCAPE:
                         self.running = False
 
-    def show_go_screen(self):
-        # show game over / continue
-        self.screen.fill(dark_red)
-        draw_text('GAME OVER', 26, white, WIDTH / 2, height / 2 - 30)
-        draw_text('Press ESC to exit the game.', 24, white, WIDTH / 2, height / 2)
-        draw_text('Press \'r\' to restart the game.', 24, white, WIDTH / 2, height / 2 + 30)
-        if self.score > self.highscore:
-            self.highscore = self.score
-            draw_text('New high score!', 30, white, WIDTH / 2, height / 2 + 70)
-            with open(path.join(dir, highscore_textfile), 'w') as f:
-                f.write(str(self.score))
-        else:
-            draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 70)
-        pg.display.flip()
-        self.running = wait_key_event_start_screen()
-
 g = Game()
 running = show_start_screen()
 while running and g.running:
     g.new()
-if g.game_over:
-    g.show_go_screen()
+    if g.game_over:
+        restart = show_go_screen(g.score, g.highscore)
+        if restart:
+            g.running = True
+        else:
+            break
 pg.quit()
