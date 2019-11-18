@@ -1,50 +1,75 @@
-# THIS IS JUST TEMPORARY SETS OF CODE FOR EXPERIMENTATION STUFF ON MAIN MODULE
-# PLEASE USE WITH CAUTION
-# THESE MAY CAUSE ERRORS
-
-import random
-import pygame as pg
 from settings import *
-from sprites import *
-from settings import running
+import pygame as pg
 
-pg.init()
-screen = pg.display.set_mode((500, 500))
-font_name = pg.font.match_font(font_name)
-clock = pg.time.Clock()
-clock.tick(fps)
+running = True
 
-PULSE_EVENT = pg.USEREVENT + 1
+def show_start_screen():
+    # show splash / start screen
+    times = 0
+    color = [(255, 0, 0), (0, 0, 255)]
+    color_text = [white, white, black]
+    while times < 2:
+        start_screen_animation(WIDTH, height, color[times], color_text[times], times)
+        pg.display.flip()
+        times += 1
+    new_screen = pg.Surface((WIDTH, height))
+    new_screen.fill((255, 255, 255))
+    new_screen.set_alpha(255)
+    # screen.blit(new_screen, (0, 0))
+    for alpha in range(0, 255):
+        new_screen.set_alpha(255 - alpha)
+        draw_text('DROP!', 30, black, WIDTH / 2, height / 3)
+        draw_text('Press RETURN to start the game!', 25, black, WIDTH / 2, height / 2)
+        draw_text('Press ESC to exit.', 25, black, WIDTH / 2, height / 2 + 70)
+        draw_text('High Score is: ' + str(highscore), 25, black, WIDTH / 2, height / 2 + 30)
+        screen.blit(new_screen, (0, 0))
+        pg.display.flip()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
+                return running
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    pass
+        pg.display.flip()
+    wait_key_event_start_screen()
 
 
-def start_screen_animation(width, height, color, c_text):
+def start_screen_animation(width, height, color, c_text, times):
     fade = pg.Surface((width, height))
     fade.fill((0, 0, 0))
-    draw_text(text[times], 65, white, 500 / 2, 500 / 2)
+    draw_text(text_at_start[times], 65, white, 500 / 2, 500 / 2)
     for alpha in range(0, 255):
         fade.set_alpha(alpha)
         screen.fill((color))
-        draw_text(text[times], 65, c_text, 500 / 2, 500 / 2)
+        draw_text(text_at_start[times], 65, c_text, 500 / 2, 500 / 2)
         screen.blit(fade, (0, 0))
         pg.display.flip()
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                pg.quit()
+                running = False
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    pg.quit()
+                    pass
 
 
-def draw_text(text, size, color, x, y):
-    # function for drawing the text on the screen
-    font = pg.font.Font(font_name, size)
-    text_surface = font.render(text, True, color)
-    text_rect = text_surface.get_rect()
-    text_rect.midtop = (x, y)
-    screen.blit(text_surface, text_rect)
+def wait_key_event_start_screen():
+    waiting = True
+    while waiting:
+        clock.tick(fps)
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                waiting = False
+                running = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:
+                    waiting = False
+                if event.key == pg.K_ESCAPE:
+                    waiting = False
+                    running = False
 
-
-try:
+"""try:
+    running = True
     while running:
         show_main_menu = False
         for event in pg.event.get():
@@ -81,41 +106,16 @@ try:
                 pg.display.flip()
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
-                        running = False
+                        pg.quit()
                     elif event.type == pg.KEYDOWN:
                         if event.key == pg.K_ESCAPE:
-                            running = False
+                            pg.quit()
+
             pg.display.flip()
         else:
             screen.fill((255, 255, 255))
 
 
 except pg.error:
-    print("An error has occured within the program.")
-else:
-    pg.quit()
-"""def intrun(self):
-    self.score = 0
-    self.all_sprites = pg.sprite.Group()
-    self.platforms = pg.sprite.Group()
-    for platform in platform_list:
-        p = Platform(*platform)
-        self.all_sprites.add(p)
-        self.platforms.add(p)
-    self.player = Player(self)
-    self.all_sprites.add(self.player)
-    
-    while self.running:
-        if self.score < 20:
-            pass
-            #automove
-        else:
-            # fadeout
-            break
-    
-        self.clock.tick(fps)
-        self.events()
-        self.update()
-        self.draw()
-    
-    pg.display.flip()"""
+    print("An error has occured within the program.")"""
+

@@ -3,6 +3,7 @@ import random
 from os import path
 from settings import *
 from sprites import *
+import start_screen
 
 
 class Game:
@@ -10,25 +11,12 @@ class Game:
         # initialize game window, etc.
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, height)) # add pg.FULLSCREEN if you want to full screen
+        self.screen = screen # add pg.FULLSCREEN if you want to full screen
         pg.display.set_caption(title)
-        self.clock = pg.time.Clock()
-        self.running = True
         self.game_over = False
-        self.font_name = pg.font.match_font(font_name)
         self.newPlatformInterval = 50
         self.currentInterval = 0
-        self.load_hs_data()
-        self.delay = pg.time.Clock()
-
-    def load_hs_data(self):
-        # read high score from highscore.txt
-        self.dir = path.dirname(__file__)
-        with open(path.join(self.dir, highscore_textfile), 'w') as f:
-            try:
-                self.highscore = int(f.read())
-            except:
-                self.highscore = 0
+        self.highscore = load_hs_data()
 
     def new(self):
         # starting a new game
@@ -46,8 +34,8 @@ class Game:
 
     def run(self):
         # Game loop
-        while self.running:
-            self.clock.tick(fps)
+        while start_screen.running:
+            clock.tick(fps)
             self.events()
             self.update()
             self.draw()
@@ -104,7 +92,7 @@ class Game:
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.QUIT:
-                self.running = False
+                start_screen.running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.game_over = True
@@ -112,111 +100,54 @@ class Game:
                     self.platforms.empty()
                     self.new()
                 elif event.key == pg.K_SPACE:
-                    self.pause()
+                    # self.pause_screen()
+                    pass
 
     def draw(self):
         # Game loop for drawing graphics
         if not self.game_over:
             self.screen.fill(gray)
             self.all_sprites.draw(self.screen)
-            self.draw_text(str(self.score), 22, white, WIDTH / 2, 50)
+            draw_text(str(self.score), 22, white, WIDTH / 2, 50)
         else:
             self.show_go_screen()
 
         # *after* drawing everything, flip the display
         pg.display.flip()
 
-    def show_start_screen(self):
-        # show splash / start screen
-        self.newwidth = self.width_loop = WIDTH
-        self.newheight = self.height_loop = height
-        self.animax = 0
-        self.animay = 0
-        rsg, rsg_text = ['red', 'yellow', 'green'], ['READY', 'SET', 'DROP!']
-        rsg_count = 0
-        while rsg_count < len(rsg):
-            self.screen.fill(pg.color.Color(rsg[rsg_count]))
-            self.draw_text(rsg_text[rsg_count], 125, white, WIDTH / 2, height / 2 - 30)
-            pg.display.flip()
-            pg.time.delay(500)
-            rsg_count += 1
-
-        while self.width_loop > player_width and self.height_loop > player_height:
-            self.screen.fill(gray)
-            pg.draw.rect(self.screen, green, [self.animax, self.animay, self.width_loop, self.height_loop])
-            pg.display.flip()
-            pg.time.delay(50)
-            self.width_loop -= 22
-            self.height_loop -= 20
-            if self.animax < self.newwidth / 2.10 and self.animay < self.newheight / 2.25:
-                self.animax += 11
-                self.animay += 10
-
-        #self.intrun() #sampleplay...too hard:(
-        self.screen.fill(pg.color.Color('purple'))
-        self.draw_text('Welcome to DROP!', 30, white, WIDTH / 2, height / 3)
-        self.draw_text('Press RETURN to start the game!', 25, white, WIDTH / 2, height / 2)
-        self.draw_text('Press ESC to exit.', 25, white, WIDTH / 2, height / 2 + 70)
-        self.draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 30)
-        pg.display.flip()
-        self.wait_key_event_start_screen()
-
-    def wait_key_event_start_screen(self):
-        waiting = True
-        while waiting:
-            self.clock.tick(fps)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    waiting = False
-                    self.running = False
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_RETURN:
-                        waiting = False
-                    if event.key == pg.K_ESCAPE:
-                        waiting = False
-                        self.running = False
-
     def pause_screen(self):
         pause = True
         while pause:
-            self.clock.tick(fps)
+            clock.tick(fps)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pause = False
-                    self.running = False
+                    start_screen.running = False
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         pause = False
                     if event.key == pg.K_ESCAPE:
-                        self.running = False
+                        start_screen.running = False
 
     def show_go_screen(self):
         # show game over / continue
         self.screen.fill(dark_red)
-        self.draw_text('GAME OVER', 26, white, WIDTH / 2, height / 2 - 30)
-        self.draw_text('Press ESC to exit the game.', 24, white, WIDTH / 2, height / 2)
-        self.draw_text('Press \'r\' to restart the game.', 24, white, WIDTH / 2, height / 2 + 30)
+        draw_text('GAME OVER', 26, white, WIDTH / 2, height / 2 - 30)
+        draw_text('Press ESC to exit the game.', 24, white, WIDTH / 2, height / 2)
+        draw_text('Press \'r\' to restart the game.', 24, white, WIDTH / 2, height / 2 + 30)
         if self.score > self.highscore:
             self.highscore = self.score
-            self.draw_text('New high score!', 30, white, WIDTH / 2, height / 2 + 70)
-            with open(path.join(self.dir, highscore_textfile), 'w') as f:
+            draw_text('New high score!', 30, white, WIDTH / 2, height / 2 + 70)
+            with open(path.join(dir, highscore_textfile), 'w') as f:
                 f.write(str(self.score))
         else:
-            self.draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 70)
+            draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 70)
         pg.display.flip()
-        self.wait_key_event_start_screen()
-
-    def draw_text(self, text, size, color, x, y):
-        # function for drawing the text on the screen
-        font = pg.font.Font(self.font_name, size)
-        text_surface = font.render(text, True, color)
-        text_rect = text_surface.get_rect()
-        text_rect.midtop = (x, y)
-        self.screen.blit(text_surface, text_rect)
+        start_screen.wait_key_event_start_screen()
 
 g = Game()
-g.show_start_screen()
-while g.running:
+start_screen.show_start_screen()
+while start_screen.running:
     g.new()
 if g.game_over:
     g.show_go_screen()

@@ -1,12 +1,35 @@
 import itertools
+import pygame as pg
+from os import path
+
+def load_hs_data():
+    # read high score from highscore.txt
+    with open(path.join(dir, highscore_textfile), 'w') as f:
+        try:
+            highscore = int(f.read())
+        except:
+            highscore = 0
+    return highscore
+
+def draw_text(text, size, color, x, y):
+    # function for drawing the text on the screen
+    font = pg.font.Font(font_name, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    screen.blit(text_surface, text_rect)
+
 
 # game resolution and fps
 title = "Pygame Platformer Test"
 WIDTH = 800
 height = 768
 fps = 60
-font_name = 'courier'
+font_style = 'courier'
 highscore_textfile = 'highscore.txt'
+screen = pg.display.set_mode((WIDTH, height))
+clock = pg.time.Clock()
+font_name = pg.font.match_font(font_style)
 
 # Player properties:
 player_accel = 0.5
@@ -35,3 +58,13 @@ gray = (125, 125, 125)
 yellow = (255, 255, 0)
 dark_red = (125, 0, 0)
 colors = itertools.cycle(['red', 'blue', 'orange', 'purple'])
+
+#for loading hs data:
+dir = path.dirname(__file__)
+highscore = load_hs_data()
+
+#for start_screen.py
+text_at_start = ['Ready', 'Set']
+
+
+
