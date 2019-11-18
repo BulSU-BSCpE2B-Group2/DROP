@@ -95,3 +95,29 @@ except pg.error:
     print("An error has occured within the program.")
 else:
     pg.quit()
+
+"""def intrun(self):
+    self.score = 0
+    self.all_sprites = pg.sprite.Group()
+    self.platforms = pg.sprite.Group()
+    for platform in platform_list:
+        p = Platform(*platform)
+        self.all_sprites.add(p)
+        self.platforms.add(p)
+    self.player = Player(self)
+    self.all_sprites.add(self.player)
+
+    while self.running:
+        if self.score < 20:
+            pass
+            #automove
+        else:
+            # fadeout
+            break
+
+        self.clock.tick(fps)
+        self.events()
+        self.update()
+        self.draw()
+
+    pg.display.flip()"""

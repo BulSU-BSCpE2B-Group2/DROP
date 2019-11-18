@@ -107,7 +107,6 @@ class Game:
                 self.running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    self.running = False
                     self.game_over = True
                 elif event.key == pg.K_r:
                     self.platforms.empty()
@@ -205,6 +204,7 @@ class Game:
         else:
             self.draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 70)
         pg.display.flip()
+        self.wait_key_event_start_screen()
 
     def draw_text(self, text, size, color, x, y):
         # function for drawing the text on the screen
@@ -214,39 +214,10 @@ class Game:
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
 
-    def intrun(self):
-        self.score = 0
-
-        self.all_sprites = pg.sprite.Group()
-        self.platforms = pg.sprite.Group()
-        for platform in platform_list:
-            p = Platform(*platform)
-            self.all_sprites.add(p)
-            self.platforms.add(p)
-        self.player = Player(self)
-        self.all_sprites.add(self.player)
-
-        while self.running:
-            if self.score < 20:
-                pass
-                #automove
-            else:
-                # fadeout
-                break
-
-            self.clock.tick(fps)
-            self.events()
-            self.update()
-            self.draw()
-
-        pg.display.flip()
-
-
 g = Game()
 g.show_start_screen()
-while True:
-    while g.running:
-        g.new()
-    if g.game_over:
-        g.show_go_screen()
+while g.running:
+    g.new()
+if g.game_over:
+    g.show_go_screen()
 pg.quit()
