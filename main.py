@@ -24,6 +24,7 @@ class Game:
         # starting a new game
         self.score = 0
         self.multiplier = 1
+        self.run__ = True
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         for platform in platform_list:
@@ -36,7 +37,7 @@ class Game:
 
     def run(self):
         # Game loop
-        while self.running:
+        while self.run__:
             clock.tick(fps)
             self.events()
             self.update()
@@ -98,7 +99,7 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.game_over = True
-                elif event.key == pg.K_r:
+                elif event.key == pg.K_e:
                     self.platforms.empty()
                     self.new()
                 elif event.key == pg.K_SPACE:
@@ -112,7 +113,7 @@ class Game:
             self.all_sprites.draw(self.screen)
             draw_text(str(self.score), 22, white, WIDTH / 2, 50)
         else:
-            self.running = False
+            self.run__ = False
 
         # *after* drawing everything, flip the display
         pg.display.flip()
@@ -131,14 +132,19 @@ class Game:
                     if event.key == pg.K_ESCAPE:
                         self.running = False
 
+
 g = Game()
-running = show_start_screen()
-while running and g.running:
-    g.new()
-    if g.game_over:
-        restart = show_go_screen(g.score, g.highscore)
-        if restart:
-            g.running = True
-        else:
-            break
+while True:
+    running = show_start_screen()
+    while running and g.running:
+        g.new()
+        if g.game_over:
+            restart = show_go_screen(g.score, g.highscore)
+            if restart:
+                g.platforms.empty()
+                g.new()
+            else:
+                break
+    if not running:
+        break
 pg.quit()
