@@ -19,11 +19,11 @@ PULSE_EVENT = pg.USEREVENT + 1
 def start_screen_animation(width, height, color, c_text):
     fade = pg.Surface((width, height))
     fade.fill((0, 0, 0))
-    draw_text(text[times], 20, white, 500 / 2, 500 / 2)
+    draw_text(text[times], 65, white, 500 / 2, 500 / 2)
     for alpha in range(0, 255):
         fade.set_alpha(alpha)
         screen.fill((color))
-        draw_text(text[times], 20, c_text, 500 / 2, 500 / 2)
+        draw_text(text[times], 65, c_text, 500 / 2, 500 / 2)
         screen.blit(fade, (0, 0))
         pg.display.flip()
         for event in pg.event.get():
@@ -57,7 +57,7 @@ try:
                     pg.time.set_timer(PULSE_EVENT, 1)
             if event.type == PULSE_EVENT:
                 times = 0
-                color = [(255, 255, 0), (255, 0, 255)]
+                color = [(255, 0, 0), (0, 0, 255)]
                 text = ['Ready', 'Set']
                 color_text = [white, white, black]
                 while times < 2:
@@ -71,7 +71,8 @@ try:
             new_screen.fill((255, 255, 255))
             new_screen.set_alpha(255)
             screen.blit(new_screen, (0, 0))
-            draw_text('DROP!', 50, black, 250, 250)
+            draw_text('DROP!', 65, black, 250, 250)
+            draw_text('Main menu should go here.', 50, black, 250, 300)
             pg.display.flip()
         else:
             screen.fill((255, 255, 255))
