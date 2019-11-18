@@ -107,11 +107,13 @@ class Game:
                 self.running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    self.show_start_screen()
+                    self.running = False
+                    self.game_over = True
                 elif event.key == pg.K_r:
-                    self.game_over = False
                     self.platforms.empty()
                     self.new()
+                elif event.key == pg.K_SPACE:
+                    self.pause()
 
     def draw(self):
         # Game loop for drawing graphics
@@ -137,14 +139,14 @@ class Game:
             self.screen.fill(pg.color.Color(rsg[rsg_count]))
             self.draw_text(rsg_text[rsg_count], 125, white, WIDTH / 2, height / 2 - 30)
             pg.display.flip()
-            pg.time.wait(500)
+            pg.time.delay(500)
             rsg_count += 1
 
         while self.width_loop > player_width and self.height_loop > player_height:
             self.screen.fill(gray)
             pg.draw.rect(self.screen, green, [self.animax, self.animay, self.width_loop, self.height_loop])
             pg.display.flip()
-            pg.time.wait(50)
+            pg.time.delay(50)
             self.width_loop -= 22
             self.height_loop -= 20
             if self.animax < self.newwidth / 2.10 and self.animay < self.newheight / 2.25:
@@ -158,12 +160,12 @@ class Game:
         self.draw_text('Press ESC to exit.', 25, white, WIDTH / 2, height / 2 + 70)
         self.draw_text('High Score is: ' + str(self.highscore), 25, white, WIDTH / 2, height / 2 + 30)
         pg.display.flip()
-        self.wait_key_event()
+        self.wait_key_event_start_screen()
 
-    def wait_key_event(self):
+    def wait_key_event_start_screen(self):
         waiting = True
         while waiting:
-            self.clock.tick(60)
+            self.clock.tick(fps)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False
@@ -173,6 +175,20 @@ class Game:
                         waiting = False
                     if event.key == pg.K_ESCAPE:
                         waiting = False
+                        self.running = False
+
+    def pause_screen(self):
+        pause = True
+        while pause:
+            self.clock.tick(fps)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pause = False
+                    self.running = False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_RETURN:
+                        pause = False
+                    if event.key == pg.K_ESCAPE:
                         self.running = False
 
     def show_go_screen(self):
@@ -228,7 +244,9 @@ class Game:
 
 g = Game()
 g.show_start_screen()
-while g.running:
-    g.new()
-
+while True:
+    while g.running:
+        g.new()
+    if g.game_over:
+        g.show_go_screen()
 pg.quit()
