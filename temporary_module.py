@@ -11,12 +11,12 @@ pg.init()
 screen = pg.display.set_mode((500, 500))
 
 
-def start_screen_animation(width, height):
+def start_screen_animation(width, height, color):
     fade = pg.Surface((width, height))
     fade.fill((0, 0, 0))
     for alpha in range(0, 255):
         fade.set_alpha(alpha)
-        screen.fill((0, 255, 255))
+        screen.fill((color))
         screen.blit(fade, (0, 0))
         pg.display.flip()
         for event in pg.event.get():
@@ -38,7 +38,11 @@ try:
                 if event.key == pg.K_ESCAPE:
                     run = False
                 if event.key == pg.K_RETURN:
-                    start_screen_animation(500, 500)
+                    times = 0
+                    color = [(255, 255, 0), (255, 0, 255), (255, 0, 0), (125, 90, 100)]
+                    while times < 4:
+                        start_screen_animation(500, 500, color[random.randint(0, 3)])
+                        times += 1
         clock = pg.time.Clock()
         clock.tick(fps)
 except pg.error:
