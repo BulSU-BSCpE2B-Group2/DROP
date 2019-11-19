@@ -33,9 +33,9 @@ def wait_key_event_go_screen():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_r:
                     waiting = False
-                    run = True
-                    if run:
-                        return run
+                    running = True
+                    if running:
+                        return running
                 if event.key == pg.K_ESCAPE:
                     waiting = False
                     running = False
