@@ -1,10 +1,13 @@
 TODO LIST:
     CORE LOGIC:
-    1.) GAME OVER SCREEN, move it to another module
-    2.) Make a new event function specifically for game over module
-    3.) Hook it to the main script
+    1.) Pause
+    2.) Settings Menu
+    3.) SUGGESTION: Dark mode? - requires an entirely new set of graphics.
+    4.) Game over screen fade
+    5.) Add sounds and graphics
+    6.) Main menu beautification
     GRAPHICS DESIGN:
-        (FORMAT AY WIDTH X HEIGHT)
+        (FORMAT IS WIDTH X HEIGHT)
         1.) PLATFORM SIZE: 85 X 20 PIXELS
             - 8 bit themed, can be grass or stone or should depend on what the current background is
         2.) BACKGROUND SIZE: 800 X 1536 PIXELS
@@ -19,7 +22,7 @@ TODO LIST:
         2.) Actual game
         3.) Settings menu (if we're going to put Character Selection menu)
         ===========================================================================
-        Sound effects is requirede for the following:
+        Sound effects is required for the following:
         1.) Opening sound
         2.) Button selected
         3.) Button hovered
