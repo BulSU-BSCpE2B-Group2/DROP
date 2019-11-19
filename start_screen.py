@@ -24,12 +24,12 @@ def show_start_screen():
         pg.display.flip()
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                running = False
-                if not running:
-                    return running
+                run = False
+                if not run:
+                    return run
         pg.display.flip()
-    running = wait_key_event_start_screen()
-    return running
+    run = wait_key_event_start_screen()
+    return run
 
 
 def start_screen_animation(width, height, color, c_text, times):
@@ -59,9 +59,7 @@ def wait_key_event_start_screen():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 waiting = False
-                running = False
-                if not running:
-                    return running
+                return waiting
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_RETURN:
                     waiting = False

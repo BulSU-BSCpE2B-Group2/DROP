@@ -14,17 +14,16 @@ class Game:
         pg.mixer.init()
         self.screen = screen # add pg.FULLSCREEN if you want to full screen
         pg.display.set_caption(title)
-        self.game_over = False
         self.newPlatformInterval = 50
         self.currentInterval = 0
         self.highscore = load_hs_data()
-        self.running = running
+        self.running = True
 
     def new(self):
         # starting a new game
         self.score = 0
+        self.running = True
         self.multiplier = 1
-        self.run__ = True
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         for platform in platform_list:
@@ -37,7 +36,7 @@ class Game:
 
     def run(self):
         # Game loop
-        while self.run__:
+        while self.running:
             clock.tick(fps)
             self.events()
             self.update()
@@ -88,7 +87,7 @@ class Game:
                     sprite.kill()
 
         if self.player.rect.top < 0:
-            self.game_over = True
+            self.running = False
 
     def events(self):
         # Game loop - EVENTS
@@ -98,7 +97,7 @@ class Game:
                 self.running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    self.game_over = True
+                    self.running = False
                 elif event.key == pg.K_e:
                     self.platforms.empty()
                     self.new()
@@ -108,13 +107,9 @@ class Game:
 
     def draw(self):
         # Game loop for drawing graphics
-        if not self.game_over:
-            self.screen.fill(gray)
-            self.all_sprites.draw(self.screen)
-            draw_text(str(self.score), 22, white, WIDTH / 2, 50)
-        else:
-            self.run__ = False
-
+        self.screen.fill(gray)
+        self.all_sprites.draw(self.screen)
+        draw_text(str(self.score), 22, white, WIDTH / 2, 50)
         # *after* drawing everything, flip the display
         pg.display.flip()
 
@@ -135,16 +130,15 @@ class Game:
 
 g = Game()
 while True:
-    running = show_start_screen()
-    while running and g.running:
-        g.new()
-        if g.game_over:
+    run = show_start_screen()
+    if not run:
+        break
+    else:
+        while run and g.running:
+            g.new()
             restart = show_go_screen(g.score, g.highscore)
             if restart:
-                g.platforms.empty()
-                g.new()
+                g.running = True
             else:
                 break
-    if not running:
-        break
 pg.quit()
