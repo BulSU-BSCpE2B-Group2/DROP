@@ -2,7 +2,7 @@ TODO LIST:
     CORE LOGIC:
     1.) Pause
     2.) Settings Menu
-    3.) SUGGESTION: Dark mode? - requires an entirely new set of graphics.
+    3.) SUGGESTION: Dark mode? - requires an entirely new set of graphics. <melissa>
     4.) Game over screen fade
     5.) Add sounds and graphics
     6.) Main menu beautification
@@ -13,6 +13,9 @@ TODO LIST:
         2.) BACKGROUND SIZE: 800 X 1536 PIXELS
             - Different backgrounds can be made
                 > Sunny, night time, afternoon, etc
+        3.) LOGO!
+        5.) Main menu design - please submit as soon as possible
+                - button design
     SOUNDS:
         FOR SOUND EFFECTS, PLEASE CONVERT IT TO .wav FORMAT
         FOR BACKGROUND MUSIC, IT SHOULD BE .mp3
