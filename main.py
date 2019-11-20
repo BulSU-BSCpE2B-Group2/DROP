@@ -46,13 +46,16 @@ class Game:
         # game loop update
         self.multiplier += 0.0001
         self.score += 1
+        self.height_platform = 2
         speed = 2 * self.multiplier
         if speed > 4:
             self.multiplier = 1
         self.gaps = random.randint(1, 6)
         self.currentInterval += 1
         if self.currentInterval * self.multiplier > self.newPlatformInterval:
-            sequence, rect = add_platform(self.gaps)
+            if not self.height_platform > 6:
+                self.height_platform += 1
+            sequence, rect = add_platform(self.gaps, self.height_platform)
             for x in sequence:
                 if x == 1:
                     p = Platform(rect.center, (67, 20))
@@ -80,7 +83,7 @@ class Game:
         # if player reaches 1/4 from the bottom of the screen
         if self.player.rect.bottom > (height / 4) * 3:
             self.score += 1
-            self.currentInterval += 4
+            self.currentInterval += 3
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.vel.y, 10)
                 if sprite.rect.bottom < 10:

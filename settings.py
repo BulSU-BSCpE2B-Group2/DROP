@@ -2,6 +2,7 @@ import itertools
 import pygame as pg
 from os import path
 
+
 def load_hs_data():
     # read high score from highscore.txt
     with open(path.join(dir, highscore_textfile), 'w') as f:
@@ -11,6 +12,7 @@ def load_hs_data():
             highscore = 0
     return highscore
 
+
 def draw_text(text, size, color, x, y):
     # function for drawing the text on the screen
     font = pg.font.Font(font_name, size)
@@ -18,6 +20,26 @@ def draw_text(text, size, color, x, y):
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     screen.blit(text_surface, text_rect)
+
+
+def infade_draw_text(text, size, color, x, y):
+    # function for drawing the text on the screen
+    clock = pg.time.Clock()
+    font = pg.font.Font(font_name, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    txt_surf = text_surface.copy()
+    alpha_surf = pg.Surface(txt_surf.get_size(), pg.SRCALPHA)
+    alpha = 255
+    while alpha > 0:
+        alpha = max(alpha - 50, 0)
+        txt_surf = text_surface.copy()
+        alpha_surf.fill((255, 255, 255, 255 - alpha))
+        txt_surf.blit(alpha_surf, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
+        screen.blit(txt_surf, text_rect)
+        pg.display.flip()
+        clock.tick(fps)
 
 
 # game resolution and fps
@@ -41,8 +63,11 @@ player_gravity = 1
 player_jump = 20
 
 # list of platforms
-platform_list = [((WIDTH / 2 - 50, height * 3 / 4), (100, 20)), ((125, height - 350), (100, 20)),
-                 ((350, 200), (100, 20)), ((172, 100), (50, 20))]
+platform_list = []
+
+# [((WIDTH / 2 - 50, height * 3 / 4), (100, 20)), ((125, height - 350), (100, 20)),
+                 # ((350, 200), (100, 20)), ((172, 100), (50, 20))]
+
 
 gaps_1 = [()]
 

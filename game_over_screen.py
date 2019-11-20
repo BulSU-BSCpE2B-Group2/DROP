@@ -12,8 +12,12 @@ def show_go_screen(score, highscore):
 
 def go_screen_animation(width, height, color, score, highscore):
     fade = pg.Surface((width, height))
-    for alpha in range(0, 255):
+    go_text_surface = pg.Surface((width, height))
+    for alpha in range(0, 255, 10):
         fade.fill((color))
+        fade.set_alpha(alpha)
+        screen.blit(fade, (0, 0))
+        go_text_surface.set_alpha(0)
         draw_text('GAME OVER', 26, white, WIDTH / 2, height / 2 - 30)
         draw_text('Press ESC to exit the game.', 24, white, WIDTH / 2, height / 2)
         draw_text('Press \'r\' to restart the game.', 24, white, WIDTH / 2, height / 2 + 30)
@@ -23,8 +27,7 @@ def go_screen_animation(width, height, color, score, highscore):
                 f.write(str(score))
         else:
             draw_text('High Score is: ' + str(highscore), 25, white, WIDTH / 2, height / 2 + 70)
-        fade.set_alpha(255 - alpha)
-        screen.blit(fade, (0, 0))
+        screen.blit(go_text_surface, (0, 0))
         pg.display.flip()
         for event in pg.event.get():
             if event.type == pg.QUIT:

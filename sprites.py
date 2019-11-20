@@ -80,7 +80,7 @@ class Platform(pg.sprite.Sprite):
         self.rect.center = self.position
 
 
-def add_platform(gaps):
+def add_platform(gaps, spawn_height):
     gaps_1 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -101,7 +101,7 @@ def add_platform(gaps):
         random.shuffle(gaps_2)
         sequence = gaps_2
 
-    rect = pg.Rect(0, 0, WIDTH / 12, height * 5)
+    rect = pg.Rect(0, 0, WIDTH / 12, height * spawn_height)
     return sequence, rect
 
 
