@@ -3,7 +3,6 @@ TODO LIST:
     1.) Pause
     2.) Settings Menu
     3.) SUGGESTION: Dark mode? - requires an entirely new set of graphics. <melissa>
-    4.) Game over screen fade
     5.) Add sounds and graphics
     6.) Main menu beautification
     GRAPHICS DESIGN:
