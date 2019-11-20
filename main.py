@@ -134,11 +134,11 @@ while True:
     if not run:
         break
     else:
-        while run and g.running:
+        while run:
             g.new()
             restart = show_go_screen(g.score, g.highscore)
             if restart:
-                g.running = True
+                run = True
             else:
                 break
 pg.quit()
