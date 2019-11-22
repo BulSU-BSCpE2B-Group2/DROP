@@ -80,6 +80,24 @@ class Platform(pg.sprite.Sprite):
         self.rect.center = self.position
 
 
+class SlowPlatformPowerUp(pg.sprite.Sprite):
+    def __init__(self, position):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((20, 20))
+        self.position = position
+        self.circle = self.image.get_rect()
+        self.circle.center = self.position
+        pg.draw.circle(self.image, blue, self.position, 20)
+
+def spawn_power_up(generate):
+    spawn = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+    no_spawn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    if generate == 1:
+        return random.shuffle(spawn)
+    else:
+        return no_spawn
+
+
 def add_platform(gaps, spawn_height):
     gaps_1 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
