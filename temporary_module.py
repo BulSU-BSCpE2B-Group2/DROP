@@ -24,7 +24,7 @@ def fade_pause_animation():
     i = 0
     position_x = 0
     interval = 1000
-    while i <= 50:
+    while i <= 80:
         timer = 0
         while True:
             timer += 0.007
@@ -44,15 +44,6 @@ def fade_pause_animation():
     a = wait_key_event_pause_screen()
     if a:
         fade_pause_animation()
-
-
-def draw_text(text, size, color, x, y):
-    # function for drawing the text on the screen
-    font = pg.font.Font(font_name, size)
-    text_surface = font.render(text, True, color)
-    text_rect = text_surface.get_rect()
-    text_rect.midtop = (x, y)
-    screen.blit(text_surface, text_rect)
 
 
 def wait_key_event_pause_screen():
@@ -82,21 +73,18 @@ def event_while_animation():
             if event.key == pg.K_ESCAPE:
                 return True
 
-try:
-    while running:
-        clock.tick(fps)
-        screen.fill(white)
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
+
+while running:
+    clock.tick(fps)
+    screen.fill(white)
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            running = False
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
                 running = False
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    running = False
-                if event.key == pg.K_RETURN:
-                    fade_pause_animation()
-        pg.display.flip()
-except pg.error:
-    print("An error has occured within the program.")
-else:
-    pg.quit()
+            if event.key == pg.K_RETURN:
+                fade_pause_animation()
+    pg.display.flip()
+
 pg.quit()

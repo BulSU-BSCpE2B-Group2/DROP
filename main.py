@@ -5,6 +5,7 @@ from settings import *
 from sprites import *
 from start_screen import *
 from game_over_screen import *
+from pause_screen import *
 
 
 class Game:
@@ -27,10 +28,6 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.slowplatformpowerup = pg.sprite.Group()
-        """for platform in platform_list:
-            p = Platform(*platform)
-            self.all_sprites.add(p)
-            self.platforms.add(p)"""
         self.player = Player(self)
         self.all_sprites.add(self.player)
         self.run()
@@ -139,7 +136,7 @@ class Game:
                     self.new()
                 # soon! pause feature.
                 elif event.key == pg.K_SPACE:
-                    # self.pause_screen()
+                    self.pause_screen()
                     pass
 
     def draw(self):
@@ -154,18 +151,9 @@ class Game:
         pg.display.flip()
 
     def pause_screen(self): # does not work yet, will edit soon!
-        pause = True
-        while pause:
-            clock.tick(fps)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pause = False
-                    self.running = False
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_RETURN:
-                        pause = False
-                    if event.key == pg.K_ESCAPE:
-                        self.running = False
+        clock.tick(fps)
+        self.pause = fade_pause_animation()
+        return self.pause
 
 
 # turn 'g' into an object of Game class, essentially initializing pygame
@@ -181,6 +169,7 @@ while True:
     # else, initialize the game loop (which is the 'new' function) inside the Game class
     else:
         while run:
+            start_game_animation_sequence()
             g.new()
             # if player dies, game over screen shows, show_go_screen tells restart whether or not it wants to
             # restart or not (True or False statement gate again)

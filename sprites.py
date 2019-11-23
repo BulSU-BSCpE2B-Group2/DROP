@@ -124,6 +124,3 @@ def add_platform(gaps, spawn_height):
         random.shuffle(gaps_2)
         sequence = gaps_2
     return sequence, rect
-
-
-
