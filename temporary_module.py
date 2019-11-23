@@ -12,7 +12,6 @@ pg.init()
 screen = pg.display.set_mode((500, 500))
 font_name = pg.font.match_font(font_name)
 clock = pg.time.Clock()
-clock.tick(fps)
 
 running = True
 PULSE_EVENT = pg.USEREVENT
@@ -20,37 +19,31 @@ PULSE_EVENT = pg.USEREVENT
 
 
 def fade_pause_animation():
+    clock.tick(fps)
+    screen.fill(white)
     i = 0
     position_x = 0
-    while i <= 10:
-        surface = pg.Surface((position_x, 500))
+    interval = 1000
+    while i <= 50:
+        timer = 0
+        while True:
+            timer += 0.007
+            if timer > interval:
+                break
+        surface = pg.Surface((500, 500), pg.SRCALPHA)
         pg.draw.rect(surface, black, (position_x, 0, 10, 500))
-        if i == 50:
-            draw_text('PAUSE', 65, white, 500 / 2, 500 / 2)
-        for alpha in range(0, 255, 5):
-            screen.fill(white)
-            surface.set_alpha(alpha)
-            screen.blit(surface, (0, 0))
-            pg.display.flip()
-        position_x += 10
-
-
-"""def start_screen_animation(width, height, color, c_text):
-    fade = pg.Surface((width, height))
-    fade.fill((0, 0, 0))
-    draw_text(text[times], 65, white, 500 / 2, 500 / 2)
-    for alpha in range(0, 255):
-        fade.set_alpha(alpha)
-        screen.fill((color))
-        draw_text(text[times], 65, c_text, 500 / 2, 500 / 2)
-        screen.blit(fade, (0, 0))
+        pg.draw.rect(surface, black, (490 - position_x, 0, 10, 500))
+        draw_text('PAUSE', 65, white, 500 / 2, 500 / 2)
+        screen.blit(surface, (0, 0))
         pg.display.flip()
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-            elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    pg.quit()"""
+        b = event_while_animation()
+        if b:
+            return False
+        i += 1
+        position_x += 10
+    a = wait_key_event_pause_screen()
+    if a:
+        fade_pause_animation()
 
 
 def draw_text(text, size, color, x, y):
@@ -62,8 +55,36 @@ def draw_text(text, size, color, x, y):
     screen.blit(text_surface, text_rect)
 
 
+def wait_key_event_pause_screen():
+    waiting = True
+    while waiting:
+        clock.tick(fps)
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                waiting = False
+                return waiting
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:
+                    waiting = True
+                    return waiting
+                if event.key == pg.K_ESCAPE:
+                    waiting = False
+                    return waiting
+
+
+def event_while_animation():
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            return True
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
+                return True
+            if event.key == pg.K_ESCAPE:
+                return True
+
 try:
     while running:
+        clock.tick(fps)
         screen.fill(white)
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -73,25 +94,6 @@ try:
                     running = False
                 if event.key == pg.K_RETURN:
                     fade_pause_animation()
-                    show_pause = True
-            """new_screen = pg.Surface((500, 500))
-            new_screen.fill((255, 255, 255))
-            new_screen.set_alpha(255)
-            # screen.blit(new_screen, (0, 0))
-            for alpha in range(0, 255):
-                new_screen.set_alpha(255 - alpha)
-                draw_text('DROP!', 65, black, 250, 250)
-                draw_text('Main menu should go here.', 25, black, 250, 350)
-                draw_text('FLASH SHOULD HAPPEN', 20, black, 250, 100)
-                draw_text('BEFORE THIS MENU SHOWS UP', 20, black, 250, 150)
-                screen.blit(new_screen, (0, 0))
-                pg.display.flip()
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    running = False
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE:
-                        running = False"""
         pg.display.flip()
 except pg.error:
     print("An error has occured within the program.")
