@@ -84,19 +84,22 @@ class SlowPlatformPowerUp(pg.sprite.Sprite):
     def __init__(self, position):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((10, 10))
+        self.image.fill(blue)
+        self.rect = self.image.get_rect()
         self.position = position
-        self.circle = self.image.get_rect()
-        self.circle.center = self.position
-        pg.draw.circle(self.image, blue, self.position, 20)
+        self.rect.center = self.position
 
 
-def spawn_power_up(generate):
+def spawn_power_up(generate, pu_spawn_height):
+    p_rect = pg.Rect(0, 0, WIDTH / 12, height * pu_spawn_height - 50)
     spawn = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
     no_spawn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     if generate == 1:
-        return random.shuffle(spawn)
+        random.shuffle(spawn)
+        sequence = spawn
     else:
-        return no_spawn
+        sequence = no_spawn
+    return sequence, p_rect
 
 
 def add_platform(gaps, spawn_height):
@@ -106,15 +109,21 @@ def add_platform(gaps, spawn_height):
     gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
     if gaps == 1:
-        return random.shuffle(gaps_1), rect
+        random.shuffle(gaps_1)
+        sequence = gaps_1
     elif gaps == 2:
-        return random.shuffle(gaps_2), rect
+        random.shuffle(gaps_2)
+        sequence = gaps_2
     elif gaps == 3:
-        return random.shuffle(gaps_3), rect
+        random.shuffle(gaps_3)
+        sequence = gaps_3
     elif gaps == 4:
-        return random.shuffle(gaps_4), rect
+        random.shuffle(gaps_4)
+        sequence = gaps_4
     else:
-        return random.shuffle(gaps_2), rect
+        random.shuffle(gaps_2)
+        sequence = gaps_2
+    return sequence, rect
 
 
 

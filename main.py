@@ -26,10 +26,11 @@ class Game:
         self.multiplier = 1
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
-        for platform in platform_list:
+        self.slowplatformpowerup = pg.sprite.Group()
+        """for platform in platform_list:
             p = Platform(*platform)
             self.all_sprites.add(p)
-            self.platforms.add(p)
+            self.platforms.add(p)"""
         self.player = Player(self)
         self.all_sprites.add(self.player)
         self.run()
@@ -54,6 +55,7 @@ class Game:
             self.multiplier = 1
         # gaps spawn function
         self.gaps = random.randint(1, 6)
+        self.generate = random.randint(0, 4)
         self.currentInterval += 1
         if self.currentInterval * self.multiplier > self.newPlatformInterval:
             if not self.height_platform > 6:
@@ -68,15 +70,38 @@ class Game:
                 else:
                     rect.width += 134
             self.currentInterval = 0
+        # slow platform power up function spawn
+            power_up, power_up_rect = spawn_power_up(self.generate, self.height_platform)
+            for n in power_up:
+                if n == 1:
+                    slowplatform_powerup = SlowPlatformPowerUp(power_up_rect.center)
+                    self.slowplatformpowerup.add(slowplatform_powerup)
+                    self.all_sprites.add(slowplatform_powerup)
+                    power_up_rect.width += 134
+                else:
+                    power_up_rect.width += 134
+
         # update number of platforms, update the player position
+        self.slowplatformpowerup.update()
         self.player.update()
         self.platforms.update()
+
+        # if power up leaves the screen, kill it.
+        for slowdown_platform in self.slowplatformpowerup:
+            slowdown_platform.rect.y -= speed
+            if slowdown_platform.rect.top <= -20:
+                slowdown_platform.kill()
 
         # if platform leaves the screen, kill it.
         for platform in self.platforms:
             platform.rect.y -= speed
             if platform.rect.top <= -20:
                 platform.kill()
+
+        # check if player hits a power_up
+        slow_down_hit = pg.sprite.spritecollide(self.player, self.slowplatformpowerup, True)
+        if slow_down_hit:
+            self.multiplier = 0.5
 
         # check if player hits a platform - only if falling!
         if self.player.vel.y > 0:
