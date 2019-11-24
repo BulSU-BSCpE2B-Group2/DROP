@@ -44,7 +44,7 @@ def infade_draw_text(text, size, color, x, y):
 
 # game resolution and fps
 running = True
-title = "Pygame Platformer Test"
+title = "DROP!"
 WIDTH = 800
 height = 768
 fps = 60

@@ -7,6 +7,7 @@ from start_screen import *
 from game_over_screen import *
 from pause_screen import *
 
+RESET_SPEED_EVENT = pg.USEREVENT + 1
 
 class Game:
     def __init__(self):
@@ -43,18 +44,18 @@ class Game:
     def update(self):
         # game loop update
         # initialize variables needed for the function
-        self.multiplier += 0.0001
+        self.multiplier += 0.0008
         self.score += 1
         self.height_platform = 2
-        speed = 2 * self.multiplier
+        self.speed = 2 * self.multiplier
         # if speed is more than 4, speed multiplier goes back to 0
-        if speed > 4:
+        if self.speed > 4:
             self.multiplier = 1
         # gaps spawn function
         self.gaps = random.randint(1, 6)
         self.generate = random.randint(0, 4)
         self.currentInterval += 1
-        if self.currentInterval * self.multiplier > self.newPlatformInterval:
+        if (self.currentInterval + self.speed) > self.newPlatformInterval:
             if not self.height_platform > 6:
                 self.height_platform += 1
             sequence, rect = add_platform(self.gaps, self.height_platform)
@@ -79,19 +80,19 @@ class Game:
                     power_up_rect.width += 134
 
         # update number of platforms, update the player position
-        self.slowplatformpowerup.update()
         self.player.update()
         self.platforms.update()
+        self.slowplatformpowerup.update()
 
         # if power up leaves the screen, kill it.
         for slowdown_platform in self.slowplatformpowerup:
-            slowdown_platform.rect.y -= speed
+            slowdown_platform.rect.y -= self.speed
             if slowdown_platform.rect.top <= -20:
                 slowdown_platform.kill()
 
         # if platform leaves the screen, kill it.
         for platform in self.platforms:
-            platform.rect.y -= speed
+            platform.rect.y -= self.speed
             if platform.rect.top <= -20:
                 platform.kill()
 
@@ -99,12 +100,13 @@ class Game:
         slow_down_hit = pg.sprite.spritecollide(self.player, self.slowplatformpowerup, True)
         if slow_down_hit:
             self.multiplier = 0.5
+            pg.time.set_timer(RESET_SPEED_EVENT, 6000)
 
         # check if player hits a platform - only if falling!
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                self.player.pos.y = hits[0].rect.top - speed
+                self.player.pos.y = hits[0].rect.top - self.speed
                 self.player.vel.y = 0
 
         # if player reaches 1/4 from the bottom of the screen, camera should follow the player position
@@ -120,12 +122,20 @@ class Game:
         if self.player.rect.top < 0:
             self.running = False
 
+        # for debugging purposes, do not remove yet.
+        """print("Speed is: {}".format(self.speed))
+        print("Speed multiplier is: {}".format(self.multiplier))
+        print("Current interval is: {}".format(self.currentInterval))"""
+
     def events(self):
         # Game loop - EVENTS
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.QUIT:
                 self.running = False
+            if event.type == RESET_SPEED_EVENT:
+                self.multiplier = 1
+                pg.time.set_timer(RESET_SPEED_EVENT, 0)
             if event.type == pg.KEYDOWN:
                 # if escape it should go to the game over screen
                 if event.key == pg.K_ESCAPE:
