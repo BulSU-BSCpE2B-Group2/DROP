@@ -6,6 +6,7 @@ from sprites import *
 from start_screen import *
 from game_over_screen import *
 from pause_screen import *
+from main_menu import *
 
 RESET_SPEED_EVENT = pg.USEREVENT + 1
 
@@ -29,7 +30,9 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.slowplatformpowerup = pg.sprite.Group()
+        self.player_sprite = pg.sprite.Group()
         self.player = Player(self)
+        self.player_sprite.add(self.player)
         self.all_sprites.add(self.player)
         self.run()
 
@@ -80,9 +83,6 @@ class Game:
                     power_up_rect.width += 134
 
         # update number of platforms, update the player position
-        self.player.update()
-        self.platforms.update()
-        self.slowplatformpowerup.update()
 
         # if power up leaves the screen, kill it.
         for slowdown_platform in self.slowplatformpowerup:
@@ -106,7 +106,7 @@ class Game:
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                self.player.pos.y = hits[0].rect.top - self.speed
+                self.player.pos.y = hits[0].rect.top - 1
                 self.player.vel.y = 0
 
         # if player reaches 1/4 from the bottom of the screen, camera should follow the player position
@@ -114,13 +114,17 @@ class Game:
             self.score += 1
             self.currentInterval += 4
             for sprite in self.all_sprites:
-                sprite.rect.y -= max(self.player.vel.y, 20)
+                sprite.rect.y -= max(self.player.vel.y, 10)
                 if sprite.rect.bottom < 10:
                     sprite.kill()
 
         # if player reaches spike, player dies.
         if self.player.rect.top < 0:
             self.running = False
+
+        self.player.update()
+        self.platforms.update()
+        self.slowplatformpowerup.update()
 
         # for debugging purposes, do not remove yet.
         """print("Speed is: {}".format(self.speed))
@@ -154,7 +158,9 @@ class Game:
         # the background is gray, will add animated background soon!
         self.screen.fill(gray)
         # draw and update all existing sprites on screen
-        self.all_sprites.draw(self.screen)
+        self.slowplatformpowerup.draw(self.screen)
+        self.player_sprite.draw(self.screen)
+        self.platforms.draw(self.screen)
         # draw and update the score
         draw_text(str(self.score), 22, white, WIDTH / 2, 50)
         # *after* drawing everything, flip the display for changes to take effect on the window
@@ -168,27 +174,32 @@ class Game:
 
 # turn 'g' into an object of Game class, essentially initializing pygame
 g = Game()
+# turn 'mm' into an object of MainMenu class
+mm = MainMenu()
 # loop that makes restarting work. will only be broken by break statements
 while True:
     # assign show_start_screen() to run variable to tell whether the return value of show_start_screen()/
     # / is true or false
-    run = show_start_screen()
+    mm.new()
     # if show_start_screen() returned false, break the loop, ending the program.
-    if not run:
-        break
-    # else, initialize the game loop (which is the 'new' function) inside the Game class
-    else:
-        while run:
-            start_game_animation_sequence()
-            g.new()
-            # if player dies, game over screen shows, show_go_screen tells restart whether or not it wants to
-            # restart or not (True or False statement gate again)
-            restart = show_go_screen(g.score, g.highscore)
-            # if you want to restart, run sets to true then loop happens all over again.
-            if restart:
-                run = True
-            # it puts you back to the outer loop, showing you the start_screen and giving you another choice to
-            # start the game or completely exit.
-            else:
-                break
+    if not mm.running():
+        # else, initialize the game loop (which is the 'new' function) inside the Game class
+        if mm.exit:
+            break
+        else:
+            while True:
+                start_game_animation_sequence()
+                g.new()
+                if not g.running:
+                    print("Game is no longer running.")
+                # if player dies, game over screen shows, show_go_screen tells restart whether or not it wants to
+                # restart or not (True or False statement gate again)
+                restart = show_go_screen(g.score, g.highscore)
+                # if you want to restart, run sets to true then loop happens all over again.
+                if restart:
+                    continue
+                # it puts you back to the outer loop, showing you the start_screen and giving you another choice to
+                # start the game or completely exit.
+                else:
+                    break
 pg.quit()
