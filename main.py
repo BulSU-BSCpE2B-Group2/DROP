@@ -48,7 +48,7 @@ class Game:
         # initialize variables needed for the function
         self.multiplier += 0.0008
         self.score += 1
-        self.height_platform = 2
+        self.height_platform = 1
         self.speed = 2 * self.multiplier
         # if speed is more than 4, speed multiplier goes back to 0
         if self.speed > 4:
@@ -105,7 +105,7 @@ class Game:
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                self.player.pos.y = hits[0].rect.top - 1
+                self.player.pos.y = hits[0].rect.top + 3
                 self.player.vel.y = 0
 
         # if player reaches 1/4 from the bottom of the screen, camera should follow the player position

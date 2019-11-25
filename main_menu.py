@@ -18,6 +18,8 @@ class MainMenu:
     def __init__(self):
         self.screen = screen
         self.bg = pg.image.load('assets/main_menu/bg.png').convert_alpha()
+        self.bg_rect = self.bg.get_rect()
+        self.bg2 = pg.image.load('assets/main_menu/bg.png').convert_alpha()
         self.glow = pg.image.load('assets/main_menu/3.png').convert_alpha()
         self.glow_rect = self.glow.get_rect()
         self.logo = Logo()
@@ -28,6 +30,7 @@ class MainMenu:
         self.running = True
         self.timer = 0
         self.background = vec(0, 0)
+        self.background2 = vec(self.bg_rect.width, 0)
         self.run()
 
     def run(self):
@@ -40,13 +43,19 @@ class MainMenu:
     def update(self):
         """if self.timer < 120:
             # self.b.position.x += 1
-            self.timer += 1
-        #self.background.y -= 3"""
-        self.bg.scroll(dx=0, dy=-1)
+            self.timer += 1"""
+        self.background.x -= 3
+        self.background2.x -= 3
+        if self.background.x < -self.bg_rect.width:
+            self.background.x = self.bg_rect.width
+        if self.background2.x < -self.bg_rect.width:
+            self.background2.x = self.bg_rect.width
+        #self.bg.scroll(dx=0, dy=-1)
 
     def draw(self):
-        #screen.blit(self.bg, (self.background.x, self.background.y))
-        screen.blit(self.bg, (0, 0))
+        screen.blit(self.bg, (self.background.x, self.background.y))
+        screen.blit(self.bg2, (self.background2.x, self.background2.y))
+        #screen.blit(self.bg, (0, 0))
         # insert in this line the glowy effect thingies
         screen.blit(self.glow, self.glow_rect)
         screen.blit(self.planet.planet, self.planet.planet_rect)

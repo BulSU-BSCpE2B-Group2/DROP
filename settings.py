@@ -59,7 +59,7 @@ height = 768
 fps = 60
 font_style = 'arial'
 highscore_textfile = 'highscore.txt'
-screen = pg.display.set_mode((WIDTH, height))
+screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
 clock = pg.time.Clock()
 font_name = pg.font.match_font(font_style)
 
