@@ -42,6 +42,15 @@ def infade_draw_text(text, size, color, x, y):
         clock.tick(fps)
 
 
+def kinematics(accel, vel, pos):
+    # apply friction
+    accel.x += vel.x * player_friction
+    # equations of motion
+    vel += accel
+    pos += vel + 0.5 * accel
+    return pos
+
+
 # game resolution and fps
 running = True
 title = "DROP!"

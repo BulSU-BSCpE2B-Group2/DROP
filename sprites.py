@@ -21,13 +21,13 @@ class Player(pg.sprite.Sprite):
         self.next_color = next(colors)
         self.current_color = self.base_color
 
-    def jump(self):
+    """def jump(self):
         # jump only if standing on a platform
         self.rect.x += 1
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
         if hits:
-            self.vel.y = -player_jump
+            self.vel.y = -player_jump"""
 
     def update(self):
         self.accel = vec(0, player_gravity)
@@ -39,11 +39,8 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_RIGHT]:
             self.accel.x = player_accel
 
-        # apply friction
-        self.accel.x += self.vel.x * player_friction
-        # equations of motion
-        self.vel += self.accel
-        self.pos += self.vel + 0.5 * self.accel
+        # kinematics equation from the settings module
+        self.pos = kinematics(self.accel, self.vel, self.pos)
         # wrap around the screen
         if self.pos.x > WIDTH - (player_width / 2):
             self.pos.x = WIDTH - player_width / 2
@@ -71,10 +68,11 @@ class Player(pg.sprite.Sprite):
 
 
 class Platform(pg.sprite.Sprite):
-    def __init__(self, position, dimensions):
+    def __init__(self, position):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface(dimensions)
-        self.image.fill(green)
+        # self.image = pg.Surface(dimensions)
+        # self.image.fill(green)
+        self.image = pg.image.load('assets/platform/platform-01.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.position = position
         self.rect.center = self.position

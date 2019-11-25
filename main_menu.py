@@ -1,12 +1,33 @@
 from settings import *
+vec = pg.math.Vector2
 
+class Logo:
+    def __init__(self):
+        self.logo = pg.image.load('assets/main_menu/TITLE.png')
+        self.logo_rect = self.logo.get_rect()
+        self.logo_rect.center = (WIDTH/2, height/2)
+        self.position = vec(WIDTH / 2 - self.logo_rect.top, (height / 2) - self.logo_rect.left)
+
+class Planet:
+    def __init__(self):
+        self.planet = pg.image.load('assets/main_menu/4.png').convert_alpha()
+        self.planet_rect = self.planet.get_rect()
+        self.position = vec(self.planet_rect.top, self.planet_rect.left)
 
 class MainMenu:
     def __init__(self):
         self.screen = screen
+        self.bg = pg.image.load('assets/main_menu/bg.png').convert_alpha()
+        self.glow = pg.image.load('assets/main_menu/3.png').convert_alpha()
+        self.glow_rect = self.glow.get_rect()
+        self.logo = Logo()
+        self.planet = Planet()
+        self.planet.planet_rect.center = self.glow_rect.center
 
     def new(self):
         self.running = True
+        self.timer = 0
+        self.background = vec(0, 0)
         self.run()
 
     def run(self):
@@ -17,12 +38,19 @@ class MainMenu:
             self.draw()
 
     def update(self):
-        pass
+        """if self.timer < 120:
+            # self.b.position.x += 1
+            self.timer += 1
+        #self.background.y -= 3"""
+        self.bg.scroll(dx=0, dy=-1)
 
     def draw(self):
-        self.screen.fill(white)
-        # show splash / start screen
-
+        #screen.blit(self.bg, (self.background.x, self.background.y))
+        screen.blit(self.bg, (0, 0))
+        # insert in this line the glowy effect thingies
+        screen.blit(self.glow, self.glow_rect)
+        screen.blit(self.planet.planet, self.planet.planet_rect)
+        screen.blit(self.logo.logo, self.logo.position)
         pg.display.flip()
 
     def events(self):

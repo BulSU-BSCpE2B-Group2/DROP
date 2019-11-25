@@ -20,7 +20,6 @@ class Game:
         self.newPlatformInterval = 50
         self.currentInterval = 0
         self.highscore = load_hs_data()
-        self.running = True
 
     def new(self):
         # starting a new game
@@ -64,7 +63,7 @@ class Game:
             sequence, rect = add_platform(self.gaps, self.height_platform)
             for x in sequence:
                 if x == 1:
-                    p = Platform(rect.center, (67, 20))
+                    p = Platform(rect.center)
                     self.platforms.add(p)
                     self.all_sprites.add(p)
                     rect.width += 134
@@ -182,7 +181,7 @@ while True:
     # / is true or false
     mm.new()
     # if show_start_screen() returned false, break the loop, ending the program.
-    if not mm.running():
+    if not mm.running:
         # else, initialize the game loop (which is the 'new' function) inside the Game class
         if mm.exit:
             break
@@ -190,8 +189,8 @@ while True:
             while True:
                 start_game_animation_sequence()
                 g.new()
-                if not g.running:
-                    print("Game is no longer running.")
+                """if not g.running:
+                    print("Game is no longer running.")"""
                 # if player dies, game over screen shows, show_go_screen tells restart whether or not it wants to
                 # restart or not (True or False statement gate again)
                 restart = show_go_screen(g.score, g.highscore)
