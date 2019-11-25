@@ -1,10 +1,9 @@
 TODO LIST:
     CORE LOGIC:
-    1.) Pause
     2.) Settings Menu
-    3.) SUGGESTION: Dark mode? - requires an entirely new set of graphics. <melissa>
-    5.) Add sounds and graphics
-    6.) Main menu beautification
+    3.) Add sounds and graphics
+    4.) Main menu beautification
+    5.) STARTING PLATFORM to avoid the infamous hollow platform bug
     GRAPHICS DESIGN:
         (FORMAT IS WIDTH X HEIGHT)
         1.) PLATFORM SIZE: 85 X 20 PIXELS

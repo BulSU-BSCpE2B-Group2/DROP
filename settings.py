@@ -113,7 +113,7 @@ colors = itertools.cycle(['red', 'blue', 'orange', 'purple'])
 dir = path.dirname(__file__)
 highscore = load_hs_data()
 
-#for start_screen.py
+#for start_game_screen.py
 text_at_start = ['Ready', 'Set']
 
 

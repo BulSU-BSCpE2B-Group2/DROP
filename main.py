@@ -3,7 +3,7 @@ import random
 from os import path
 from settings import *
 from sprites import *
-from start_screen import *
+from start_game_screen import *
 from game_over_screen import *
 from pause_screen import *
 from main_menu import *
@@ -26,6 +26,7 @@ class Game:
         self.score = 0
         self.running = True
         self.multiplier = 1
+        self.alpha = 255
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.slowplatformpowerup = pg.sprite.Group()
@@ -120,6 +121,10 @@ class Game:
         # if player reaches spike, player dies.
         if self.player.rect.top < 0:
             self.running = False
+
+        self.alpha -= 1
+        if self.alpha <= 0:
+            self.alpha = 0
 
         self.player.update()
         self.platforms.update()
