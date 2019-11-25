@@ -44,12 +44,7 @@ class MainMenu:
         """if self.timer < 120:
             # self.b.position.x += 1
             self.timer += 1"""
-        self.background.x -= 3
-        self.background2.x -= 3
-        if self.background.x < -self.bg_rect.width:
-            self.background.x = self.bg_rect.width
-        if self.background2.x < -self.bg_rect.width:
-            self.background2.x = self.bg_rect.width
+        self.background, self.background2 = scrolling_background(-3, 0, self.background, self.background2, self.bg_rect)
         #self.bg.scroll(dx=0, dy=-1)
 
     def draw(self):

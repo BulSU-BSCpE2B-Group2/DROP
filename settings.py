@@ -50,6 +50,21 @@ def kinematics(accel, vel, pos):
     pos += vel + 0.5 * accel
     return pos
 
+def scrolling_background(x_speed, y_speed, background, background2, bg_rect):
+    # assuming that background and background2 are the same images, one bg_rect should only exist
+    background.x += x_speed
+    background2.x += x_speed
+    background.y += y_speed
+    background2.y += y_speed
+    if background.x < -bg_rect.width:
+        background.x = bg_rect.width
+    if background2.x < -bg_rect.width:
+        background2.x = bg_rect.width
+    if background.y < -bg_rect.height:
+        background.y = bg_rect.height
+    if background2.y < -bg_rect.height:
+        background2.y = bg_rect.height
+    return background, background2
 
 # game resolution and fps
 running = True
