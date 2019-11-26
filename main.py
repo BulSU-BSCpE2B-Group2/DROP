@@ -51,12 +51,14 @@ class Game:
         self.score += 1
         self.height_platform = 1
         self.speed = 2 * self.multiplier
+
         # if speed is more than 4, speed multiplier goes back to 0
         if self.speed > 4:
             self.multiplier = 1
+
         # gaps spawn function
         self.gaps = random.randint(1, 6)
-        self.generate = random.randint(0, 4)
+        self.generate = random.randint(0, 8)
         self.currentInterval += 1
         if (self.currentInterval + self.speed) > self.newPlatformInterval:
             if not self.height_platform > 6:
@@ -71,6 +73,7 @@ class Game:
                 else:
                     rect.width += 134
             self.currentInterval = 0
+
         # slow platform power up function spawn
             power_up, power_up_rect = spawn_power_up(self.generate, self.height_platform)
             for n in power_up:
@@ -131,9 +134,9 @@ class Game:
         self.slowplatformpowerup.update()
 
         # for debugging purposes, do not remove yet.
-        """print("Speed is: {}".format(self.speed))
+        print("Speed is: {}".format(self.speed))
         print("Speed multiplier is: {}".format(self.multiplier))
-        print("Current interval is: {}".format(self.currentInterval))"""
+        print("Current interval is: {}".format(self.currentInterval))
 
     def events(self):
         # Game loop - EVENTS

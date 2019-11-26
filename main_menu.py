@@ -1,30 +1,22 @@
 from settings import *
 vec = pg.math.Vector2
 
-class Logo:
-    def __init__(self):
-        self.logo = pg.image.load('assets/main_menu/TITLE.png')
-        self.logo_rect = self.logo.get_rect()
-        self.logo_rect.center = (WIDTH/2, height/2)
-        self.position = vec(WIDTH / 2 - self.logo_rect.top, (height / 2) - self.logo_rect.left)
-
-class PlanetMars:
-    def __init__(self):
-        self.planet = pg.image.load('assets/main_menu/4.png').convert_alpha()
-        self.planet_rect = self.planet.get_rect()
-        self.position = vec(self.planet_rect.top, self.planet_rect.left)
 
 class MainMenu:
     def __init__(self):
+        # initialize screen
         self.screen = screen
+
+        # initialize background 1 & 2
         self.bg = pg.image.load('assets/main_menu/bg.png').convert_alpha()
-        self.bg_rect = self.bg.get_rect()
         self.bg2 = pg.image.load('assets/main_menu/bg.png').convert_alpha()
-        self.glow_mars = pg.image.load('assets/main_menu/3.png').convert_alpha()
-        self.glow_mars_rect = self.glow_mars.get_rect()
+        self.bg_rect = self.bg.get_rect()
+
+        # initialize the required classes
         self.logo = Logo()
         self.planet_mars = PlanetMars()
-        self.planet_mars.planet_rect.center = self.glow_mars_rect.center
+        self.planet_earth = PlanetEarth()
+        self.button = Buttons()
 
     def new(self):
         self.running = True
@@ -45,15 +37,17 @@ class MainMenu:
             # self.b.position.x += 1
             self.timer += 1"""
         self.background, self.background2 = scrolling_background(-3, 0, self.background, self.background2, self.bg_rect)
-        #self.bg.scroll(dx=0, dy=-1)
 
     def draw(self):
         screen.blit(self.bg, (self.background.x, self.background.y))
         screen.blit(self.bg2, (self.background2.x, self.background2.y))
-        #screen.blit(self.bg, (0, 0))
         # insert in this line the glowy effect thingies
-        screen.blit(self.glow_mars, self.glow_mars_rect)
-        screen.blit(self.planet_mars.planet, self.planet_mars.planet_rect)
+        screen.blit(self.planet_mars.mars_glow, self.planet_mars.mars_glow_rect)
+        screen.blit(self.planet_mars.mars, self.planet_mars.mars_rect)
+        screen.blit(self.planet_earth.earth_glow, self.planet_earth.earth_glow_rect)
+        screen.blit(self.planet_earth.earth, self.planet_earth.earth_rect)
+        screen.blit(self.button.settings_button, self.button.settings_button_rect)
+        screen.blit(self.button.start_button, self.button.start_button_rect)
         screen.blit(self.logo.logo, self.logo.position)
         pg.display.flip()
 
@@ -69,3 +63,42 @@ class MainMenu:
                 if event.key == pg.K_ESCAPE:
                     self.running = False
                     self.exit = True
+
+
+class Logo:
+    def __init__(self):
+        self.logo = pg.image.load('assets/main_menu/TITLE.png').convert_alpha()
+        self.logo_rect = self.logo.get_rect()
+        self.logo_rect.center = (WIDTH/2, height/2)
+        self.position = vec(WIDTH / 2 - self.logo_rect.top, (height / 2) - self.logo_rect.left - 90)
+
+
+class PlanetMars:
+    def __init__(self):
+        self.mars = pg.image.load('assets/main_menu/4.png').convert_alpha()
+        self.mars_rect = self.mars.get_rect()
+        self.mars_glow = pg.image.load('assets/main_menu/3.png').convert_alpha()
+        self.mars_glow_rect = self.mars_glow.get_rect()
+        self.position = vec(self.mars_rect.top, self.mars_rect.left)
+        self.mars_rect.center = (WIDTH / 2 + 120, height / 2 + 70)
+        self.mars_glow_rect.center = self.mars_rect.center
+
+class PlanetEarth:
+    def __init__(self):
+        self.earth = pg.image.load('assets/main_menu/2.png').convert_alpha()
+        self.earth_rect = self.earth.get_rect()
+        self.earth_glow = pg.image.load('assets/main_menu/1.png').convert_alpha()
+        self.earth_glow_rect = self.earth_glow.get_rect()
+        self.position = vec(self.earth_rect.top, self.earth_rect.left)
+        self.earth_rect.center = (WIDTH / 4, height / 4 - 50)
+        self.earth_glow_rect.center = self.earth_rect.center
+
+class Buttons:
+    def __init__(self):
+        self.settings_button = pg.image.load('assets/main_menu/SETTINGS.png').convert_alpha()
+        self.settings_button_rect = self.settings_button.get_rect()
+        self.start_button = pg.image.load('assets/main_menu/START.png').convert_alpha()
+        self.start_button_rect = self.start_button.get_rect()
+        self.position = vec(self.settings_button_rect.top, self.settings_button_rect.left)
+        self.settings_button_rect.center = (WIDTH / 2, height / 2 + 190)
+        self.start_button_rect.center = (WIDTH / 2, height / 2 + 70)

@@ -8,7 +8,7 @@ def fade_pause_animation():
     i = 0
     position_x = 0
     interval = 1000
-    while i <= 50:
+    while i <= 80:
         timer = 0
         while True:
             timer += 0.007
@@ -17,7 +17,8 @@ def fade_pause_animation():
         surface = pg.Surface((WIDTH, height), pg.SRCALPHA)
         pg.draw.rect(surface, black, (position_x, 0, 10, height))
         pg.draw.rect(surface, black, ((WIDTH - 10) - position_x, 0, 10, height))
-        draw_text('PAUSE', 65, white, WIDTH / 2, height / 2)
+        draw_text('PAUSE', 65, white, WIDTH / 2, height / 2 - 30)
+        draw_text('Press ESC to continue.', 45, white, WIDTH / 2, height / 2 + 45)
         screen.blit(surface, (0, 0))
         pg.display.flip()
         b = event_while_animation()

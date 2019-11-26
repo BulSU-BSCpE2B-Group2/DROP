@@ -72,7 +72,7 @@ title = "DROP!"
 WIDTH = 800
 height = 768
 fps = 60
-font_style = 'arial'
+font_style = 'verdana'
 highscore_textfile = 'highscore.txt'
 screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
 clock = pg.time.Clock()
@@ -91,7 +91,6 @@ platform_list = []
 
 # [((WIDTH / 2 - 50, height * 3 / 4), (100, 20)), ((125, height - 350), (100, 20)),
                  # ((350, 200), (100, 20)), ((172, 100), (50, 20))]
-
 
 gaps_1 = [()]
 
