@@ -20,10 +20,13 @@ class MainMenu:
         self.button = Buttons()
         self.settings_screen = SettingsScreen()
         self.comets = Comets()
+        self.exit_button = ExitButton()
 
     def new(self):
         self.running = True
         self.timer = 0
+        self.alpha = 0
+        self.alpha_settings = 0
         self.show_settings = False
         self.background = vec(0, 0)
         self.background2 = vec(self.bg_rect.width, 0)
@@ -37,9 +40,11 @@ class MainMenu:
             self.draw()
 
     def update(self):
-        """if self.timer < 120:
-            # self.b.position.x += 1
-            self.timer += 1"""
+        if self.show_settings:
+            if self.alpha < 100:
+                self.alpha += 1
+            if self.alpha_settings < 255:
+                self.alpha_settings += 10
         self.background, self.background2 = scrolling_background(-2, 0, self.background, self.background2, self.bg_rect)
         self.mouse_coordinate = pg.mouse.get_pos()
 
@@ -58,11 +63,18 @@ class MainMenu:
         screen.blit(self.button.settings_button, self.button.settings_button_rect)
         screen.blit(self.button.start_button, self.button.start_button_rect)
         screen.blit(self.logo.logo, self.logo.position)
+        screen.blit(self.exit_button.exit_button, self.exit_button.exit_button_rect)
         if self.show_settings:
             settings_overlay_with_opacity = pg.Surface((WIDTH, height), pg.SRCALPHA)
-            settings_overlay_with_opacity.fill((100, 100, 100, 100))
+            settings_overlay_with_opacity.fill((100, 100, 100, self.alpha))
             screen.blit(settings_overlay_with_opacity, (0, 0))
-            screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
+            if self.alpha_settings < 255 or self.alpha < 100:
+                print(self.alpha_settings)
+                print(self.alpha)
+                blit_alpha(screen, self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect, self.alpha_settings)
+            else:
+                self.settings_screen.settings_overlay.convert_alpha()
+                screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
         pg.display.flip()
 
     def events(self):
@@ -80,16 +92,24 @@ class MainMenu:
                         self.exit = True
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if self.mouse_coordinate[0] > self.button.start_button_rect.x:
-                        if self.mouse_coordinate[0] < self.button.start_button_rect.x + self.button.start_button_rect.top:
+                        if self.mouse_coordinate[0] < self.button.start_button_rect.x + self.button.start_button_rect.width:
                             if self.mouse_coordinate[1] > self.button.start_button_rect.y:
-                                if self.mouse_coordinate[1] < self.button.start_button_rect.y + 120:
+                                if self.mouse_coordinate[1] < self.button.start_button_rect.y + self.button.start_button_rect.height:
                                     self.running = False
                                     self.exit = False
                     if self.mouse_coordinate[0] > self.button.settings_button_rect.x:
-                        if self.mouse_coordinate[0] < self.button.settings_button_rect.x + self.button.settings_button_rect.top:
+                        if self.mouse_coordinate[0] < self.button.settings_button_rect.x + self.button.settings_button_rect.width:
                             if self.mouse_coordinate[1] > self.button.settings_button_rect.y:
-                                if self.mouse_coordinate[1] < self.button.settings_button_rect.y + 106:
+                                if self.mouse_coordinate[1] < self.button.settings_button_rect.y + self.button.settings_button_rect.height:
+                                    self.alpha = 0
+                                    self.alpha_settings = 0
                                     self.show_settings = True
+                    if self.mouse_coordinate[0] > self.exit_button.exit_button_rect.x:
+                        if self.mouse_coordinate[0] < self.exit_button.exit_button_rect.x + self.exit_button.exit_button_rect.width:
+                            if self.mouse_coordinate[1] > self.exit_button.exit_button_rect.y:
+                                if self.mouse_coordinate[1] < self.exit_button.exit_button_rect.y + self.exit_button.exit_button_rect.height:
+                                    self.running = False
+                                    self.exit = True
             else:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
@@ -107,7 +127,7 @@ class Logo:
         self.logo = pg.image.load('assets/main_menu/TITLE.png').convert_alpha()
         self.logo_rect = self.logo.get_rect()
         self.logo_rect.center = (WIDTH/2, height/2)
-        self.position = vec(WIDTH / 2 - self.logo_rect.top, (height / 2) - self.logo_rect.left - 90)
+        self.position = vec(WIDTH / 2 - self.logo_rect.top, (height / 2) - self.logo_rect.left - 130)
 
 
 class PlanetVenus:
@@ -120,6 +140,7 @@ class PlanetVenus:
         self.venus_rect.center = (WIDTH / 9, height / 2 + 70)
         self.venus_glow_rect.center = self.venus_rect.center
 
+
 class PlanetEarth:
     def __init__(self):
         self.earth = pg.image.load('assets/main_menu/2.png').convert_alpha()
@@ -130,6 +151,7 @@ class PlanetEarth:
         self.earth_rect.center = (WIDTH / 4, height / 4 - 50)
         self.earth_glow_rect.center = self.earth_rect.center
 
+
 class PlanetMars:
     def __init__(self):
         self.mars = pg.image.load('assets/main_menu/6.png').convert_alpha()
@@ -138,6 +160,7 @@ class PlanetMars:
         self.mars_glow_rect = self.mars_glow.get_rect()
         self.mars_rect.center = (WIDTH - WIDTH / 8, height / 8)
         self.mars_glow_rect.center = (WIDTH - WIDTH / 8 + 6, height / 8 + 2)
+
 
 class Buttons:
     def __init__(self):
@@ -148,14 +171,16 @@ class Buttons:
         self.start_button = pg.image.load('assets/main_menu/START.png').convert_alpha()
         self.start_button_rect = self.start_button.get_rect()
         # set position for the buttons
-        self.settings_button_rect.center = (WIDTH / 2, height / 2 + 190)
-        self.start_button_rect.center = (WIDTH / 2, height / 2 + 70)
+        self.settings_button_rect.center = (WIDTH / 2, height / 2 + 140)
+        self.start_button_rect.center = (WIDTH / 2, height / 2 + 30)
+
 
 class SettingsScreen:
     def __init__(self):
         self.settings_overlay = pg.image.load('assets/settings_menu/SETTINGS.png').convert_alpha()
         self.settings_overlay_rect = self.settings_overlay.get_rect()
         self.settings_overlay_rect.center = (WIDTH / 2, height / 2)
+
 
 class Comets:
     def __init__(self):
@@ -165,3 +190,10 @@ class Comets:
         self.comets_glow_rect = self.comets_glow.get_rect()
         self.comets_rect.center = (WIDTH / 2 + 200, height / 2 - 90 + 270)
         self.comets_glow_rect.center = (WIDTH / 2 + 190, height / 2 - 115 + 270)
+
+
+class ExitButton:
+    def __init__(self):
+        self.exit_button = pg.image.load('assets/settings_menu/x.png').convert_alpha()
+        self.exit_button_rect = self.exit_button.get_rect()
+        self.exit_button_rect.center = (WIDTH / 2, height - height / 6)

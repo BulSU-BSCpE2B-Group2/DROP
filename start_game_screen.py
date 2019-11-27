@@ -2,6 +2,24 @@ from settings import *
 import pygame as pg
 
 
+# run this as soon as the user hits enter to start the game
+def start_game_animation_sequence():
+    times = 0
+    color = [(255, 255, 255), (255, 255, 255)]
+    color_text = [black, black]
+    while times < 2:
+        a = start_game_animation(WIDTH, height, color[times], color_text[times], times)
+        if a:
+            return a
+        pg.display.flip()
+        times += 1
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                run = False
+                if not run:
+                    return run
+
+
 def start_game_animation(width, height, color, c_text, times):
     fade = pg.Surface((width, height))
     draw_text(text_at_start[times], 65, white, width / 2, height / 2)
@@ -20,21 +38,3 @@ def start_game_animation(width, height, color, c_text, times):
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     pass
-
-
-# run this as soon as the user hits enter to start the game
-def start_game_animation_sequence():
-    times = 0
-    color = [(255, 255, 255), (255, 255, 255)]
-    color_text = [black, black]
-    while times < 2:
-        a = start_game_animation(WIDTH, height, color[times], color_text[times], times)
-        if a:
-            return a
-        pg.display.flip()
-        times += 1
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                run = False
-                if not run:
-                    return run

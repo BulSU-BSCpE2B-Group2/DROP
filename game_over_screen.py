@@ -1,51 +1,58 @@
 from settings import *
 import pygame as pg
 
-def show_go_screen(score, highscore):
-    go_screen_animation(WIDTH, height, dark_red, score, highscore)
-    run = wait_key_event_go_screen()
-    return run
 
+class GameOverScreen:
+    def __init__(self, score, highscore):
+        self.screen = screen
+        self.clock = pg.time.Clock()
+        self.score = score
+        self.highscore = highscore
 
-def go_screen_animation(width, height, color, score, highscore):
-    fade = pg.Surface((width, height))
-    go_text_surface = pg.Surface((width, height))
-    for alpha in range(0, 255, 10):
-        fade.fill((color))
-        fade.set_alpha(alpha)
+    def new(self):
+        self.alpha = 0
+        self.running = True
+        self.restart = False
+        self.run()
+
+    def run(self):
+        while self.running:
+            self.clock.tick(fps)
+            self.events()
+            self.update()
+            self.draw()
+
+    def update(self):
+        if self.alpha < 255:
+            self.alpha += 1
+
+    def draw(self):
+        fade = pg.Surface((WIDTH, height), pg.SRCALPHA)
+        fade.fill((125, 0, 0, self.alpha))
         screen.blit(fade, (0, 0))
-        go_text_surface.set_alpha(0)
-        draw_text('GAME OVER', 26, white, WIDTH / 2, height / 2 - 30)
-        draw_text('Press ESC to exit the game.', 24, white, WIDTH / 2, height / 2)
-        draw_text('Press \'r\' to restart the game.', 24, white, WIDTH / 2, height / 2 + 30)
-        if score > highscore:
-            draw_text('New high score!', 30, white, WIDTH / 2, height / 2 + 70)
-            with open(path.join(dir, highscore_textfile), 'w') as f:
-                f.write(str(score))
+
+        draw_text('GAME OVER', 26, (255, 255, 255, self.alpha), WIDTH / 2, height / 2 - 30)
+        draw_text('Press ESC to exit the game.', 24, (255, 255, 255, self.alpha), WIDTH / 2, height / 2)
+        draw_text('Press \'r\' to restart the game.', 24, (255, 255, 255, self.alpha), WIDTH / 2, height / 2 + 30)
+
+        if self.score > self.highscore:
+            draw_text('New high score!', 22, (255, 255, 255, self.alpha), WIDTH / 2, height / 2 + 70)
+            with open(path.join(directory, highscore_textfile), 'w') as f:
+                f.write(str(self.score))
+            pg.display.flip()
         else:
-            draw_text('High Score is: ' + str(highscore), 25, white, WIDTH / 2, height / 2 + 70)
-        screen.blit(go_text_surface, (0, 0))
-        pg.display.flip()
+            draw_text('High Score is: ' + str(self.highscore), 22, white, WIDTH / 2, height / 2 + 70)
+            pg.display.flip()
+
+    def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                running = False
-                return running
-            elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    pass
-
-
-def wait_key_event_go_screen():
-    waiting = True
-    while waiting:
-        clock.tick(fps)
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                waiting = False
-                return waiting
+                self.running = False
+                self.restart = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_r:
-                    return waiting
+                    self.running = False
+                    self.restart = True
                 if event.key == pg.K_ESCAPE:
-                    waiting = False
-                    return waiting
+                    self.running = False
+                    self.restart = False
