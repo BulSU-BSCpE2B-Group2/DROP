@@ -1,13 +1,14 @@
 import itertools
 import pygame as pg
 from os import path
-
+vec = pg.math.Vector2
 
 def load_hs_data():
     # read high score from highscore.txt
     with open(path.join(dir, highscore_textfile), 'w') as f:
         try:
             highscore = int(f.read())
+            print("Highscore is: %d" %highscore)
         except:
             highscore = 0
     return highscore
@@ -77,7 +78,7 @@ height = 768
 fps = 60
 font_style = 'verdana'
 highscore_textfile = 'highscore.txt'
-screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
+screen = pg.display.set_mode((WIDTH, height))
 clock = pg.time.Clock()
 font_name = pg.font.match_font(font_style)
 
@@ -86,11 +87,14 @@ player_accel = 0.5
 player_friction = -0.08
 player_width = 30
 player_height = 40
-player_gravity = 1
+player_gravity = 0.5
 player_jump = 20
 
 # list of platforms
-platform_list = []
+platform_list = [(WIDTH / 2, height / 2 + 300),(WIDTH / 2 - 85, height / 2 + 300),
+                 (WIDTH / 2 - 85*2, height / 2 + 300), (WIDTH / 2 - 85*3, height / 2 + 300),
+                 (WIDTH / 2 + 85, height / 2 + 300), (WIDTH / 2 + 85*2, height / 2 + 300),
+                 (WIDTH / 2 + 85*3, height / 2 + 300)]
 
 # [((WIDTH / 2 - 50, height * 3 / 4), (100, 20)), ((125, height - 350), (100, 20)),
                  # ((350, 200), (100, 20)), ((172, 100), (50, 20))]

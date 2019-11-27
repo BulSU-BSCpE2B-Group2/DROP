@@ -13,6 +13,8 @@ class Player(pg.sprite.Sprite):
         #self.image = pg.Surface((player_width, player_height))
         self.image = pg.image.load('assets/characters/character-01.png')
         self.rect = self.image.get_rect()
+        self.rect.width = 30
+        self.rect.height = 30
         self.rect.center = (WIDTH / 2, height / 2)
         self.pos = vec(WIDTH / 2, height / 2)
         self.vel = vec(0, 0)
@@ -90,7 +92,7 @@ class SlowPlatformPowerUp(pg.sprite.Sprite):
 
 
 def spawn_power_up(generate, pu_spawn_height):
-    p_rect = pg.Rect(0, 0, WIDTH / 12, height * pu_spawn_height - 50)
+    p_rect = pg.Rect(0, 0, WIDTH / 12, height + pu_spawn_height - 50)
     spawn = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
     no_spawn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     if generate == 1:
@@ -102,14 +104,14 @@ def spawn_power_up(generate, pu_spawn_height):
 
 
 def add_platform(gaps, spawn_height):
-    rect = pg.Rect(0, 0, WIDTH / 12, height * spawn_height)
-    gaps_1 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    rect = pg.Rect(0, 0, WIDTH / 12, height + spawn_height)
+    gap_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
     if gaps == 1:
-        random.shuffle(gaps_1)
-        sequence = gaps_1
+        random.shuffle(gap_1)
+        sequence = gap_1
     elif gaps == 2:
         random.shuffle(gaps_2)
         sequence = gaps_2

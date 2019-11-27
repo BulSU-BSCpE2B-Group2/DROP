@@ -1,9 +1,6 @@
 from settings import *
 import pygame as pg
 
-highscore = load_hs_data()
-
-
 def show_go_screen(score, highscore):
     go_screen_animation(WIDTH, height, dark_red, score, highscore)
     run = wait_key_event_go_screen()

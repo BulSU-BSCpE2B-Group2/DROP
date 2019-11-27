@@ -17,7 +17,7 @@ class Game:
         pg.mixer.init()
         self.screen = screen # add pg.FULLSCREEN if you want to full screen
         pg.display.set_caption(title)
-        self.newPlatformInterval = 50
+        self.newPlatformInterval = 80
         self.currentInterval = 0
         self.highscore = load_hs_data()
         self.bg = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
@@ -25,6 +25,7 @@ class Game:
         self.bg3 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
         self.bg4 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
         self.bg_rect = self.bg.get_rect()
+        self.highscore = load_hs_data()
 
     def new(self):
         # starting a new game
@@ -32,6 +33,8 @@ class Game:
         self.score = 0
         self.running = True
         self.multiplier = 1
+        self.height_platform = 700
+        self.event_interval = 5000
         self.alpha = 255
         self.p_multiplier = 0
         # assign sprite groups
@@ -39,6 +42,10 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.slowplatformpowerup = pg.sprite.Group()
         self.player_sprite = pg.sprite.Group()
+        for plat in platform_list:
+            p = Platform(plat)
+            self.all_sprites.add(p)
+            self.platforms.add(p)
         # assign CLASS
         self.player = Player(self)
         self.player_sprite.add(self.player)
@@ -61,22 +68,23 @@ class Game:
     def update(self):
         # game loop update
         # initialize variables needed for the function
-        self.multiplier += 0.0008
+        self.multiplier += 0.0005
         self.score += 1
-        self.height_platform = 1
-        self.speed = 2 * self.multiplier
-
+        self.speed = 1 * self.multiplier
+        print("Height_platform: %d" %self.height_platform)
+        print("Time before another platform spawns: {}".format(self.newPlatformInterval / self.speed))
+        print("Current Interval is: %d" %self.currentInterval)
+        print("Speed is: %f" %self.speed)
         # if speed is more than 4, speed multiplier goes back to 0
-        if self.speed > 5:
+        if self.speed >= 5:
             self.multiplier = 1
-
         # gaps spawn function
         self.gaps = random.randint(1, 6)
         self.generate = random.randint(0, 10)
         self.currentInterval += 1
-        if (self.currentInterval + self.speed) > self.newPlatformInterval:
-            if not self.height_platform > 6:
-                self.height_platform += 1
+        if self.currentInterval > (self.newPlatformInterval / self.speed):
+            if not self.height_platform > height * 2:
+                self.height_platform += 100
             sequence, rect = add_platform(self.gaps, self.height_platform)
             for x in sequence:
                 if x == 1:
@@ -86,7 +94,6 @@ class Game:
                     rect.width += 134
                 else:
                     rect.width += 134
-            self.currentInterval = 0
 
         # slow platform power up function spawn
             power_up, power_up_rect = spawn_power_up(self.generate, self.height_platform)
@@ -98,27 +105,26 @@ class Game:
                     power_up_rect.width += 134
                 else:
                     power_up_rect.width += 134
-
+            self.currentInterval = 0
         # update number of platforms, update the player position
 
         # if power up leaves the screen, kill it.
         for slowdown_platform in self.slowplatformpowerup:
             slowdown_platform.rect.y -= self.speed
-            if slowdown_platform.rect.top <= -20:
+            if slowdown_platform.rect.top <= -10:
                 slowdown_platform.kill()
 
         # if platform leaves the screen, kill it.
         for platform in self.platforms:
             platform.rect.y -= self.speed
-            if platform.rect.top <= -20:
+            if platform.rect.top <= -10:
                 platform.kill()
 
         # check if player hits a power_up
         slow_down_hit = pg.sprite.spritecollide(self.player, self.slowplatformpowerup, True)
         if slow_down_hit:
-            self.p_multiplier = self.multiplier
             self.multiplier = 0.5
-            pg.time.set_timer(RESET_SPEED_EVENT, 6000)
+            pg.time.set_timer(RESET_SPEED_EVENT, self.event_interval)
 
         # check if player hits a platform - only if falling!
         if self.player.vel.y > 0:
@@ -147,15 +153,14 @@ class Game:
         self.background, self.background2 = scrolling_background(-2, -1, self.background, self.background2, self.bg_rect)
         self.background3, self.background4 = scrolling_background(-2, -1, self.background3, self.background4, self.bg_rect)
 
-
         self.player.update()
         self.platforms.update()
         self.slowplatformpowerup.update()
 
         # for debugging purposes, do not remove yet.
-        print("Speed is: {}".format(self.speed))
+        """print("Speed is: {}".format(self.speed))
         print("Speed multiplier is: {}".format(self.multiplier))
-        print("Current interval is: {}".format(self.currentInterval))
+        print("Current interval is: {}".format(self.currentInterval))"""
 
     def events(self):
         # Game loop - EVENTS
@@ -164,7 +169,8 @@ class Game:
             if event.type == pg.QUIT:
                 self.running = False
             if event.type == RESET_SPEED_EVENT:
-                self.multiplier = self.p_multiplier
+                self.event_interval = 0
+                self.multiplier = 1
                 pg.time.set_timer(RESET_SPEED_EVENT, 0)
             if event.type == pg.KEYDOWN:
                 # if escape it should go to the game over screen
