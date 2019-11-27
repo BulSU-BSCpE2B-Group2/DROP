@@ -20,20 +20,34 @@ class Game:
         self.newPlatformInterval = 50
         self.currentInterval = 0
         self.highscore = load_hs_data()
+        self.bg = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
+        self.bg2 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
+        self.bg3 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
+        self.bg4 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
+        self.bg_rect = self.bg.get_rect()
 
     def new(self):
         # starting a new game
+        # set CONSTANT variables
         self.score = 0
         self.running = True
         self.multiplier = 1
         self.alpha = 255
+        self.p_multiplier = 0
+        # assign sprite groups
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.slowplatformpowerup = pg.sprite.Group()
         self.player_sprite = pg.sprite.Group()
+        # assign CLASS
         self.player = Player(self)
         self.player_sprite.add(self.player)
         self.all_sprites.add(self.player)
+        # assign the background used
+        self.background = vec(0, 0)
+        self.background2 = vec(0, self.bg_rect.height)
+        self.background3 = vec(self.bg_rect.width, 0)
+        self.background4 = vec(self.bg_rect.width, self.bg_rect.height)
         self.run()
 
     def run(self):
@@ -53,12 +67,12 @@ class Game:
         self.speed = 2 * self.multiplier
 
         # if speed is more than 4, speed multiplier goes back to 0
-        if self.speed > 4:
+        if self.speed > 5:
             self.multiplier = 1
 
         # gaps spawn function
         self.gaps = random.randint(1, 6)
-        self.generate = random.randint(0, 8)
+        self.generate = random.randint(0, 10)
         self.currentInterval += 1
         if (self.currentInterval + self.speed) > self.newPlatformInterval:
             if not self.height_platform > 6:
@@ -102,6 +116,7 @@ class Game:
         # check if player hits a power_up
         slow_down_hit = pg.sprite.spritecollide(self.player, self.slowplatformpowerup, True)
         if slow_down_hit:
+            self.p_multiplier = self.multiplier
             self.multiplier = 0.5
             pg.time.set_timer(RESET_SPEED_EVENT, 6000)
 
@@ -125,9 +140,13 @@ class Game:
         if self.player.rect.top < 0:
             self.running = False
 
-        self.alpha -= 1
+        self.alpha -= 5
         if self.alpha <= 0:
             self.alpha = 0
+
+        self.background, self.background2 = scrolling_background(-2, -1, self.background, self.background2, self.bg_rect)
+        self.background3, self.background4 = scrolling_background(-2, -1, self.background3, self.background4, self.bg_rect)
+
 
         self.player.update()
         self.platforms.update()
@@ -145,7 +164,7 @@ class Game:
             if event.type == pg.QUIT:
                 self.running = False
             if event.type == RESET_SPEED_EVENT:
-                self.multiplier = 1
+                self.multiplier = self.p_multiplier
                 pg.time.set_timer(RESET_SPEED_EVENT, 0)
             if event.type == pg.KEYDOWN:
                 # if escape it should go to the game over screen
@@ -163,13 +182,20 @@ class Game:
     def draw(self):
         # Game loop for drawing graphics
         # the background is gray, will add animated background soon!
-        self.screen.fill(gray)
+        screen.blit(self.bg, self.background)
+        screen.blit(self.bg2, self.background2)
+        screen.blit(self.bg3, self.background3)
+        screen.blit(self.bg4, self.background4)
         # draw and update all existing sprites on screen
         self.slowplatformpowerup.draw(self.screen)
         self.player_sprite.draw(self.screen)
         self.platforms.draw(self.screen)
         # draw and update the score
         draw_text(str(self.score), 22, white, WIDTH / 2, 50)
+        if self.alpha > 0:
+            flash = pg.Surface((WIDTH, height), pg.SRCALPHA)
+            flash.fill((255, 255, 255, self.alpha))
+            screen.blit(flash, (0, 0))
         # *after* drawing everything, flip the display for changes to take effect on the window
         pg.display.flip()
 

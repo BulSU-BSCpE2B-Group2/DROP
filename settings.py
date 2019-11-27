@@ -66,6 +66,9 @@ def scrolling_background(x_speed, y_speed, background, background2, bg_rect):
         background2.y = bg_rect.height
     return background, background2
 
+def popping(y_position):
+    pass
+
 # game resolution and fps
 running = True
 title = "DROP!"
@@ -97,6 +100,8 @@ gaps_1 = [()]
 
 # temporary (0, height - 40, width, 40),
 
+# get the mouse_position as the program is running:
+
 # color
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -113,7 +118,7 @@ dir = path.dirname(__file__)
 highscore = load_hs_data()
 
 #for start_game_screen.py
-text_at_start = ['Ready', 'Set']
+text_at_start = ['READY', 'SET']
 
 
 

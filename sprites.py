@@ -10,7 +10,8 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
         self.game = game
-        self.image = pg.Surface((player_width, player_height))
+        #self.image = pg.Surface((player_width, player_height))
+        self.image = pg.image.load('assets/characters/character-01.png')
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, height / 2)
         self.pos = vec(WIDTH / 2, height / 2)
@@ -31,7 +32,7 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.accel = vec(0, player_gravity)
-        self.image.fill(self.cycle_color())
+        # self.image.fill(self.cycle_color())
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
             self.accel.x = -player_accel
