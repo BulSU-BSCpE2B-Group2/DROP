@@ -1,27 +1,25 @@
 TODO LIST:
     CORE LOGIC:
+    1.) How to play screen
     2.) Settings Menu
-    3.) Add sounds and graphics
-    4.) Main menu beautification
-    5.) STARTING PLATFORM to avoid the infamous hollow platform bug
+    3.) Add sounds (more graphics are needed)
     GRAPHICS DESIGN:
         (FORMAT IS WIDTH X HEIGHT)
-        1.) PLATFORM SIZE: 85 X 20 PIXELS
+        1.) PLATFORM SIZE: 67 X 10 PIXELS
             - 8 bit themed, can be grass or stone or should depend on what the current background is
         2.) BACKGROUND SIZE: 800 X 1536 PIXELS
             - Different backgrounds can be made
                 > Sunny, night time, afternoon, etc
-        3.) LOGO!
-        5.) Main menu design - please submit as soon as possible
-                - button design
+        3.) Icon for window
     SOUNDS:
-        FOR SOUND EFFECTS, PLEASE CONVERT IT TO .wav FORMAT
+        FOR SOUND EFFECTS, PLEASE CONVERT IT TO .wav FORMAT (might turn into 16-bit sound)
         FOR BACKGROUND MUSIC, IT SHOULD BE .mp3
         ===========================================================================
         Background music is required for the following:
         1.) Main menu
         2.) Actual game
-        3.) Settings menu (if we're going to put Character Selection menu)
+        3.) Settings menu
+        4.) How to play menu
         ===========================================================================
         Sound effects is required for the following:
         1.) Opening sound
@@ -29,6 +27,6 @@ TODO LIST:
         3.) Button hovered
         4.) Hitting the ground/platform sound
         5.) Hurt sound (if the player dies from the spikes)
-        6.) -- more to be added.
+        6.) OPTIONAL: Moving sound and falling sound
         
 

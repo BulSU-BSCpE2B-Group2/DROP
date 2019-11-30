@@ -27,14 +27,17 @@ class GameOverScreen:
             self.alpha += 1
 
     def draw(self):
+        # fade to red screen
         fade = pg.Surface((WIDTH, height), pg.SRCALPHA)
         fade.fill((125, 0, 0, self.alpha))
         screen.blit(fade, (0, 0))
 
+        # draw text for game over screen
         draw_text('GAME OVER', 26, (255, 255, 255, self.alpha), WIDTH / 2, height / 2 - 30)
         draw_text('Press ESC to exit the game.', 24, (255, 255, 255, self.alpha), WIDTH / 2, height / 2)
         draw_text('Press \'r\' to restart the game.', 24, (255, 255, 255, self.alpha), WIDTH / 2, height / 2 + 30)
 
+        # if score is higher than highscore
         if self.score > self.highscore:
             draw_text('New high score!', 22, (255, 255, 255, self.alpha), WIDTH / 2, height / 2 + 70)
             with open(path.join(directory, highscore_textfile), 'w') as f:

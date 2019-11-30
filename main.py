@@ -19,10 +19,10 @@ class Game:
         pg.display.set_caption(title)
 
         # load the images for background in preparation for scrolling function at draw function inside game loop
-        self.bg = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
-        self.bg2 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
-        self.bg3 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
-        self.bg4 = pg.image.load('assets/main_menu/bg-darker.png').convert_alpha()
+        self.bg = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
+        self.bg2 = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
+        self.bg3 = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
+        self.bg4 = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
         self.bg_rect = self.bg.get_rect()
 
     def new(self):
@@ -82,10 +82,7 @@ class Game:
         self.multiplier += 0.0005
         self.score += 1
         self.speed = 1 * self.multiplier * self.multiplier_powerup
-        """print("Height_platform: %d" %self.height_platform)
-        print("Time before another platform spawns: {}".format(self.newPlatformInterval / self.speed))
-        print("Current Interval is: %d" %self.currentInterval)
-        print("Speed is: %f" %self.speed)"""
+
         # if speed is more than 4, speed multiplier goes back to 0
         if self.speed >= 5:
             self.multiplier = 1
@@ -93,6 +90,7 @@ class Game:
         # if slow is activated, speed is halved
         if self.slow:
             self.multiplier_powerup = 0.5
+
         # after slow, reset multiplier_powerup to 1
         else:
             self.multiplier_powerup = 1
@@ -253,9 +251,9 @@ while True:
             break
         else:
             while True:
+                # start animation sequence and initialize new game function & loop
                 start_game_animation_sequence()
                 g.new()
-
                 # turn 'go' into an object of GameOver class
                 go = GameOverScreen(g.score, g.highscore)
                 # if player dies, game over screen runs

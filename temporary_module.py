@@ -5,86 +5,88 @@
 
 import random
 import pygame as pg
-from settings import *
 from sprites import *
 
-pg.init()
-screen = pg.display.set_mode((500, 500))
 font_name = pg.font.match_font(font_name)
-clock = pg.time.Clock()
-
-running = True
-PULSE_EVENT = pg.USEREVENT
-# block = 500 / 10
+vec = pg.math.Vector2
 
 
-def fade_pause_animation():
-    clock.tick(fps)
-    screen.fill(white)
-    i = 0
-    position_x = 0
-    interval = 1000
-    while i <= 80:
+def grow_shrink(directory, size_change_interval, position, timer, scale_size_x, scale_size_y):
+    timer += 1
+    if timer >= size_change_interval:
+        scale_constant = -1
+    if timer < size_change_interval:
+        scale_constant = 1
+    if timer > (size_change_interval * 2):
         timer = 0
-        while True:
-            timer += 0.007
-            if timer > interval:
-                break
-        surface = pg.Surface((500, 500), pg.SRCALPHA)
-        pg.draw.rect(surface, black, (position_x, 0, 10, 500))
-        pg.draw.rect(surface, black, (490 - position_x, 0, 10, 500))
-        draw_text('PAUSE', 65, white, 500 / 2, 500 / 2)
-        screen.blit(surface, (0, 0))
-        pg.display.flip()
-        b = event_while_animation()
-        if b:
-            return False
-        i += 1
-        position_x += 10
-    a = wait_key_event_pause_screen()
-    if a:
-        fade_pause_animation()
+
+    image = pg.image.load(directory)
+
+    scale_size_x += 1 * scale_constant
+    scale_size_y += 1 * scale_constant
+    image = pg.transform.scale(image, (scale_size_x, scale_size_y))
+    rect = image.get_rect()
+    rect.center = position
+
+    return image, rect, timer, scale_size_x, scale_size_y
+
+class PlanetGlow:
+    def __init__(self):
+        self.directory = 'assets/main_menu/5.png'
+        self.image = pg.image.load(self.directory)
+        self.rect = self.image.get_rect()
+
+    def new(self, timer):
+        self.timer = timer
+        self.scale_size_x = self.rect.width
+        self.scale_size_y = self.rect.height
+
+    def update(self):
+        self.image, self.rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink(self.directory, 100, (250/2, 250/2), self.timer, self.scale_size_x, self.scale_size_y)
 
 
-def wait_key_event_pause_screen():
-    waiting = True
-    while waiting:
-        clock.tick(fps)
+class GameDevTest:
+    def __init__(self):
+        pg.init()
+        pg.mixer.init()
+        self.clock = pg.time.Clock()
+        self.win = pg.display.set_mode((500, 500))
+        self.planet_glow = PlanetGlow()
+        self.running = True
+
+    def new(self):
+        self.timer = 0
+        self.planet_glow.new(self.timer)
+        self.running = True
+        self.run()
+
+    def run(self):
+        while self.running:
+            self.clock.tick(fps)
+            self.events()
+            self.update()
+            self.draw()
+
+    def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                waiting = False
-                return waiting
+                self.running = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RETURN:
-                    waiting = True
-                    return waiting
                 if event.key == pg.K_ESCAPE:
-                    waiting = False
-                    return waiting
+                    self.running = False
 
+    def update(self):
+        self.planet_glow.update()
 
-def event_while_animation():
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            return True
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_RETURN:
-                return True
-            if event.key == pg.K_ESCAPE:
-                return True
+    def draw(self):
+        self.win.fill(white)
+        self.win.blit(self.planet_glow.image, (self.planet_glow.rect))
+        pg.display.flip()
 
-
-while running:
-    clock.tick(fps)
-    screen.fill(white)
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            running = False
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_ESCAPE:
-                running = False
-            if event.key == pg.K_RETURN:
-                fade_pause_animation()
-    pg.display.flip()
+gd = GameDevTest()
+while True:
+    gd.new()
+    if not gd.running:
+        break
 
 pg.quit()

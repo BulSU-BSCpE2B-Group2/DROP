@@ -5,6 +5,7 @@ vec = pg.math.Vector2
 
 directory = path.dirname(__file__)
 
+# for loading hs data:
 def load_hs_data():
     # read high score from highscore.txt
     with open(path.join(directory, highscore_textfile), 'r') as f:
@@ -57,6 +58,25 @@ def blit_alpha(target, source, location, opacity):
     temp.set_alpha(opacity)
     target.blit(temp, location)
 
+def grow_shrink(directory, size_change_interval, position, timer, scale_size_x, scale_size_y):
+    timer += 1
+    if timer >= size_change_interval:
+        scale_constant = -1
+    if timer < size_change_interval:
+        scale_constant = 1
+    if timer > (size_change_interval * 2):
+        timer = 0
+
+    image = pg.image.load(directory)
+
+    scale_size_x += 1 * scale_constant
+    scale_size_y += 1 * scale_constant
+    image = pg.transform.scale(image, (scale_size_x, scale_size_y))
+    rect = image.get_rect()
+    rect.center = position
+
+    return image, rect, timer, scale_size_x, scale_size_y
+
 # game resolution and fps
 running = True
 title = "DROP!"
@@ -101,8 +121,6 @@ gray = (125, 125, 125)
 yellow = (255, 255, 0)
 dark_red = (125, 0, 0)
 colors = itertools.cycle(['red', 'blue', 'orange', 'purple'])
-
-#for loading hs data:
 
 #for start_game_screen.py
 text_at_start = ['READY', 'SET']

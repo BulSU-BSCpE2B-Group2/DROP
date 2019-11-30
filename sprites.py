@@ -10,7 +10,6 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
         self.game = game
-        #self.image = pg.Surface((player_width, player_height))
         self.image = pg.image.load('assets/characters/character-01.png')
         self.rect = self.image.get_rect()
         self.rect.width = 30
@@ -73,8 +72,6 @@ class Player(pg.sprite.Sprite):
 class Platform(pg.sprite.Sprite):
     def __init__(self, position):
         pg.sprite.Sprite.__init__(self)
-        # self.image = pg.Surface(dimensions)
-        # self.image.fill(green)
         self.image = pg.image.load('assets/platform/platform-01.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.position = position
