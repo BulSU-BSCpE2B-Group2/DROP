@@ -23,14 +23,6 @@ class Player(pg.sprite.Sprite):
         self.next_color = next(colors)
         self.current_color = self.base_color
 
-    """def jump(self):
-        # jump only if standing on a platform
-        self.rect.x += 1
-        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-        self.rect.x -= 1
-        if hits:
-            self.vel.y = -player_jump"""
-
     def update(self):
         self.accel = vec(0, player_gravity)
         # self.image.fill(self.cycle_color())
@@ -88,6 +80,15 @@ class SlowPlatformPowerUp(pg.sprite.Sprite):
         self.rect.center = self.position
 
 
+class TeleportPowerUp(pg.sprite.Sprite):
+    def __init__(self, position):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((10, 10))
+        self.image.fill(green)
+        self.rect = self.image.get_rect()
+        self.position = position
+        self.rect.center = self.position
+
 def spawn_power_up(generate, pu_spawn_height):
     p_rect = pg.Rect(0, 0, WIDTH / 12, height + pu_spawn_height - 50)
     spawn = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
@@ -102,7 +103,7 @@ def spawn_power_up(generate, pu_spawn_height):
 
 def add_platform(gaps, spawn_height):
     rect = pg.Rect(0, 0, WIDTH / 12, height + spawn_height)
-    gap_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    gap_1 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_2 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_3 = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     gaps_4 = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]

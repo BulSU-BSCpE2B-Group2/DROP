@@ -9,6 +9,7 @@ from pause_screen import *
 from main_menu import *
 
 RESET_SPEED_EVENT = pg.USEREVENT + 1
+TELEPORT_EVENT = pg.USEREVENT + 2
 
 class Game:
     def __init__(self):
@@ -31,6 +32,7 @@ class Game:
         self.score = 0
         self.running = True
         self.slow = False
+        self.teleport = False
         self.multiplier = 1
         self.height_platform = 700
         self.event_interval = 5000
@@ -44,6 +46,7 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.slowplatformpowerup = pg.sprite.Group()
         self.player_sprite = pg.sprite.Group()
+        self.teleportpowerup = pg.sprite.Group()
 
         # for spawning the starting platforms
         for plat in platform_list:
@@ -84,8 +87,9 @@ class Game:
         self.speed = 1 * self.multiplier * self.multiplier_powerup
 
         # if speed is more than 4, speed multiplier goes back to 0
-        if self.speed >= 5:
+        if self.speed >= 4:
             self.multiplier = 1
+        print(self.speed)
 
         # if slow is activated, speed is halved
         if self.slow:
@@ -97,7 +101,6 @@ class Game:
 
         # gaps spawn algorithm
         self.gaps = random.randint(1, 6)
-        self.generate = random.randint(0, 10)
         self.currentInterval += 1
         if self.currentInterval > (self.newPlatformInterval / self.speed):
             if not self.height_platform > height * 2:
@@ -113,7 +116,8 @@ class Game:
                     rect.width += 134
 
         # slow platform power up algorithm spawn
-            power_up, power_up_rect = spawn_power_up(self.generate, self.height_platform)
+            self.generate_slow_platform = random.randint(0, 10)
+            power_up, power_up_rect = spawn_power_up(self.generate_slow_platform, self.height_platform)
             for n in power_up:
                 if n == 1:
                     slowplatform_powerup = SlowPlatformPowerUp(power_up_rect.center)
@@ -122,6 +126,19 @@ class Game:
                     power_up_rect.width += 134
                 else:
                     power_up_rect.width += 134
+
+        # tp power up algorithm spawn
+            self.generate_tp_powerup = random.randint(0, 8)
+            tp_power_up, tp_power_up_rect = spawn_power_up(self.generate_tp_powerup, self.height_platform)
+            for s in tp_power_up:
+                if s == 1:
+                    tpplatform_powerup = TeleportPowerUp(tp_power_up_rect.center)
+                    self.teleportpowerup.add(tpplatform_powerup)
+                    self.all_sprites.add(tpplatform_powerup)
+                    tp_power_up_rect.width += 134
+                else:
+                    tp_power_up_rect.width += 134
+
             # after all that set reset current interval
             self.currentInterval = 0
 
@@ -131,6 +148,11 @@ class Game:
             slowdown_platform.rect.y -= self.speed
             if slowdown_platform.rect.top <= -10:
                 slowdown_platform.kill()
+
+        for tp_pu in self.teleportpowerup:
+            tp_pu.rect.y -= self.speed
+            if tp_pu.rect.top <= -10:
+                tp_pu.kill()
 
         # if platform leaves the screen, kill it.
         for platform in self.platforms:
@@ -143,6 +165,10 @@ class Game:
         if slow_down_hit:
             self.slow = True
             pg.time.set_timer(RESET_SPEED_EVENT, self.event_interval)
+
+        teleport_hit = pg.sprite.spritecollide(self.player, self.teleportpowerup, True)
+        if teleport_hit:
+            pg.time.set_timer(TELEPORT_EVENT, 1)
 
         # check if player hits a platform - only if it's falling.
         if self.player.vel.y > 0:
@@ -157,8 +183,18 @@ class Game:
             self.currentInterval += 4
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.vel.y, 10)
-                if sprite.rect.bottom < 10:
+                if sprite.rect.bottom < 0:
                     sprite.kill()
+
+        if self.player.rect.bottom > height + 100:
+            self.score += 30
+            self.player.pos = vec(WIDTH / 2, height/2 + 120)
+
+
+        # teleport checker
+        if self.teleport:
+            self.player.pos = vec(self.player.pos.x, self.player.pos.y + 80)
+            self.teleport = False
 
         # if player reaches spike, player dies.
         if self.player.rect.top < 0:
@@ -177,6 +213,7 @@ class Game:
         self.player.update()
         self.platforms.update()
         self.slowplatformpowerup.update()
+        self.teleportpowerup.update()
 
         # for debugging purposes, do not remove yet.
         """print("Speed is: {}".format(self.speed))
@@ -192,6 +229,10 @@ class Game:
             if event.type == RESET_SPEED_EVENT:
                 self.slow = False
                 pg.time.set_timer(RESET_SPEED_EVENT, 0)
+            if event.type == TELEPORT_EVENT:
+                # self.player.pos = vec(self.player.pos.x, self.player.pos.y + 120)
+                self.teleport = True
+                pg.time.set_timer(TELEPORT_EVENT, 0)
             if event.type == pg.KEYDOWN:
                 # if escape it should go to the game over screen
                 if event.key == pg.K_ESCAPE:
@@ -214,6 +255,7 @@ class Game:
         screen.blit(self.bg4, self.background4)
 
         # draw and update all existing sprites on screen
+        self.teleportpowerup.draw(self.screen)
         self.slowplatformpowerup.draw(self.screen)
         self.player_sprite.draw(self.screen)
         self.platforms.draw(self.screen)
@@ -226,6 +268,11 @@ class Game:
             flash = pg.Surface((WIDTH, height), pg.SRCALPHA)
             flash.fill((255, 255, 255, self.alpha))
             screen.blit(flash, (0, 0))
+
+        if self.slow:
+            slow_indicator = pg.Surface((WIDTH, height), pg.SRCALPHA)
+            slow_indicator.fill((0, 0, 255, 50))
+            screen.blit(slow_indicator, (0, 0))
 
         # *after* drawing everything, flip the display for changes to take effect on the window
         pg.display.flip()
