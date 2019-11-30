@@ -11,7 +11,6 @@ def load_hs_data():
     with open(path.join(directory, highscore_textfile), 'r') as f:
         try:
             high_score = int(f.read())
-            print("Highscore is: %d" %high_score)
         except:
             high_score = 0
     return high_score

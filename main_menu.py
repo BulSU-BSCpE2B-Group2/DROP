@@ -1,4 +1,5 @@
 from settings import *
+
 vec = pg.math.Vector2
 
 
@@ -32,6 +33,8 @@ class MainMenu:
         self.background2 = vec(self.bg_rect.width, 0)
         # create the instance where the glow is positioned
         self.planet_mars.glow_new(self.timer)
+        self.planet_venus.glow_new(self.timer)
+        self.planet_earth.glow_new(self.timer)
         self.run()
 
     def run(self):
@@ -50,6 +53,8 @@ class MainMenu:
         self.background, self.background2 = scrolling_background(-2, 0, self.background, self.background2, self.bg_rect)
         self.mouse_coordinate = vec(pg.mouse.get_pos())
         self.planet_mars.glow_update()
+        self.planet_venus.glow_update()
+        self.planet_earth.glow_update()
 
     def draw(self):
         screen.blit(self.bg, self.background)
@@ -63,16 +68,60 @@ class MainMenu:
         screen.blit(self.planet_venus.venus, self.planet_venus.venus_rect)
         screen.blit(self.planet_earth.earth_glow, self.planet_earth.earth_glow_rect)
         screen.blit(self.planet_earth.earth, self.planet_earth.earth_rect)
+
+        # hover checker for settings button
         screen.blit(self.button.settings_button, self.button.settings_button_rect)
+
+        if self.mouse_coordinate[0] > self.button.settings_button_rect.x:
+            if self.mouse_coordinate[
+                0] < self.button.settings_button_rect.x + self.button.settings_button_rect.width:
+                if self.mouse_coordinate[1] > self.button.settings_button_rect.y:
+                    if self.mouse_coordinate[
+                        1] < self.button.settings_button_rect.y + self.button.settings_button_rect.height:
+                        # 400 x 88 is proportional to the rect size of the settings button
+                        self.button.settings_button_enlarged = pg.transform.smoothscale(self.button.settings_button, (400, 88))
+                        self.button.settings_button_enlarged_rect = self.button.settings_button_enlarged.get_rect()
+                        self.button.settings_button_enlarged_rect.center = self.button.settings_button_rect.center
+                        screen.blit(self.button.settings_button_enlarged, self.button.settings_button_enlarged_rect)
+
+        # hover checker for start button
         screen.blit(self.button.start_button, self.button.start_button_rect)
+
+        if self.mouse_coordinate[0] > self.button.start_button_rect.x:
+            if self.mouse_coordinate[
+                0] < self.button.start_button_rect.x + self.button.start_button_rect.width:
+                if self.mouse_coordinate[1] > self.button.start_button_rect.y:
+                    if self.mouse_coordinate[
+                        1] < self.button.start_button_rect.y + self.button.start_button_rect.height:
+                        # 400 x 89 is proportional to the rect size of the start button
+                        self.button.start_button_enlarged = pg.transform.smoothscale(self.button.start_button,
+                                                                                        (400, 89))
+                        self.button.start_button_enlarged_rect = self.button.start_button_enlarged.get_rect()
+                        self.button.start_button_enlarged_rect.center = self.button.start_button_rect.center
+                        screen.blit(self.button.start_button_enlarged, self.button.start_button_enlarged_rect)
+
         screen.blit(self.logo.logo, self.logo.position)
+
+        # hover checker for exit button
         screen.blit(self.button.exit_button, self.button.exit_button_rect)
+
+        if self.mouse_coordinate.x > self.button.exit_button_rect.x:
+            if self.mouse_coordinate.x < self.button.exit_button_rect.x + self.button.exit_button_rect.width:
+                if self.mouse_coordinate.y > self.button.exit_button_rect.y:
+                    if self.mouse_coordinate.y < self.button.exit_button_rect.y + self.button.exit_button_rect.height:
+                        self.button.exit_button_enlarged = pg.transform.smoothscale(self.button.exit_button,
+                                                                                     (110, 104))
+                        self.button.exit_button_enlarged_rect = self.button.exit_button_enlarged.get_rect()
+                        self.button.exit_button_enlarged_rect.center = self.button.exit_button_rect.center
+                        screen.blit(self.button.exit_button_enlarged, self.button.exit_button_enlarged_rect)
+
         if self.show_settings:
             settings_overlay_with_opacity = pg.Surface((WIDTH, height), pg.SRCALPHA)
             settings_overlay_with_opacity.fill((100, 100, 100, self.alpha))
             screen.blit(settings_overlay_with_opacity, (0, 0))
             if self.alpha_settings < 255 or self.alpha < 100:
-                blit_alpha(screen, self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect, self.alpha_settings)
+                blit_alpha(screen, self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect,
+                           self.alpha_settings)
             else:
                 self.settings_screen.settings_overlay.convert_alpha()
                 screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
@@ -103,15 +152,19 @@ class MainMenu:
                         self.exit = True
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if self.mouse_coordinate[0] > self.button.start_button_rect.x:
-                        if self.mouse_coordinate[0] < self.button.start_button_rect.x + self.button.start_button_rect.width:
+                        if self.mouse_coordinate[
+                            0] < self.button.start_button_rect.x + self.button.start_button_rect.width:
                             if self.mouse_coordinate[1] > self.button.start_button_rect.y:
-                                if self.mouse_coordinate[1] < self.button.start_button_rect.y + self.button.start_button_rect.height:
+                                if self.mouse_coordinate[
+                                    1] < self.button.start_button_rect.y + self.button.start_button_rect.height:
                                     self.running = False
                                     self.exit = False
                     if self.mouse_coordinate[0] > self.button.settings_button_rect.x:
-                        if self.mouse_coordinate[0] < self.button.settings_button_rect.x + self.button.settings_button_rect.width:
+                        if self.mouse_coordinate[
+                            0] < self.button.settings_button_rect.x + self.button.settings_button_rect.width:
                             if self.mouse_coordinate[1] > self.button.settings_button_rect.y:
-                                if self.mouse_coordinate[1] < self.button.settings_button_rect.y + self.button.settings_button_rect.height:
+                                if self.mouse_coordinate[
+                                    1] < self.button.settings_button_rect.y + self.button.settings_button_rect.height:
                                     self.alpha = 0
                                     self.alpha_settings = 0
                                     self.show_settings = True
@@ -127,7 +180,7 @@ class Logo:
     def __init__(self):
         self.logo = pg.image.load('assets/main_menu/TITLE.png').convert_alpha()
         self.logo_rect = self.logo.get_rect()
-        self.logo_rect.center = (WIDTH/2, height/2)
+        self.logo_rect.center = (WIDTH / 2, height / 2)
         self.position = vec(WIDTH / 2 - self.logo_rect.top, (height / 2) - self.logo_rect.left - 130)
 
 
@@ -138,8 +191,23 @@ class PlanetVenus:
         self.venus_glow = pg.image.load('assets/main_menu/3.png').convert_alpha()
         self.venus_glow_rect = self.venus_glow.get_rect()
         # set position for the planet mars and its glow
-        self.venus_rect.center = (WIDTH / 9, height / 2 + 70)
+        self.position = (WIDTH / 9, height / 2 + 70)
+        self.venus_rect.center = self.position
         self.venus_glow_rect.center = self.venus_rect.center
+
+    def glow_new(self, timer):
+        self.timer = timer
+        self.scale_size_x = self.venus_glow_rect.width
+        self.scale_size_y = self.venus_glow_rect.height
+
+    def glow_update(self):
+        self.venus_glow, self.venus_glow_rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink(
+            'assets/main_menu/3.png',
+            150,
+            self.position,
+            self.timer,
+            self.scale_size_x,
+            self.scale_size_y)
 
 
 class PlanetEarth:
@@ -149,8 +217,23 @@ class PlanetEarth:
         self.earth_glow = pg.image.load('assets/main_menu/1.png').convert_alpha()
         self.earth_glow_rect = self.earth_glow.get_rect()
         # set position for the planet earth and its glow
-        self.earth_rect.center = (WIDTH / 4, height / 4 - 50)
+        self.position = (WIDTH / 4, height / 4 - 50)
+        self.earth_rect.center = self.position
         self.earth_glow_rect.center = self.earth_rect.center
+
+    def glow_new(self, timer):
+        self.timer = timer
+        self.scale_size_x = self.earth_glow_rect.width
+        self.scale_size_y = self.earth_glow_rect.height
+
+    def glow_update(self):
+        self.earth_glow, self.earth_glow_rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink(
+            'assets/main_menu/1.png',
+            50,
+            self.position,
+            self.timer,
+            self.scale_size_x,
+            self.scale_size_y)
 
 
 class PlanetMars:
@@ -159,8 +242,9 @@ class PlanetMars:
         self.mars_rect = self.mars.get_rect()
         self.mars_glow = pg.image.load('assets/main_menu/5.png').convert_alpha()
         self.mars_glow_rect = self.mars_glow.get_rect()
+        self.position_glow = (WIDTH - WIDTH / 8 + 6, height / 8 + 2)
         self.mars_rect.center = (WIDTH - WIDTH / 8, height / 8)
-        self.mars_glow_rect.center = (WIDTH - WIDTH / 8 + 6, height / 8 + 2)
+        self.mars_glow_rect.center = self.position_glow
 
     def glow_new(self, timer):
         self.timer = timer
@@ -168,13 +252,13 @@ class PlanetMars:
         self.scale_size_y = self.mars_glow_rect.height
 
     def glow_update(self):
-        self.mars_glow, self.mars_glow_rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink('assets/main_menu/5.png',
-                                                                                              100,
-                                                                                              (WIDTH - WIDTH / 8 + 6,
-                                                                                               height / 8 + 2),
-                                                                                              self.timer,
-                                                                                              self.scale_size_x,
-                                                                                              self.scale_size_y)
+        self.mars_glow, self.mars_glow_rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink(
+            'assets/main_menu/5.png',
+            100,
+            self.position_glow,
+            self.timer,
+            self.scale_size_x,
+            self.scale_size_y)
 
 
 class Buttons:
