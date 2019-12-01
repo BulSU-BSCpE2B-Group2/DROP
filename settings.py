@@ -66,11 +66,11 @@ def grow_shrink(directory, size_change_interval, position, timer, scale_size_x, 
     if timer == (size_change_interval * 2):
         timer = 0
 
-    image = pg.image.load(directory)
+    image = pg.image.load(directory).convert_alpha()
 
     scale_size_x += 1 * scale_constant
     scale_size_y += 1 * scale_constant
-    image = pg.transform.scale(image, (scale_size_x, scale_size_y))
+    image = pg.transform.smoothscale(image, (scale_size_x, scale_size_y))
     rect = image.get_rect()
     rect.center = position
 
@@ -84,7 +84,7 @@ height = 768
 fps = 60
 font_style = 'verdana'
 highscore_textfile = 'highscore.txt'
-screen = pg.display.set_mode((WIDTH, height))
+screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
 clock = pg.time.Clock()
 font_name = pg.font.match_font(font_style)
 

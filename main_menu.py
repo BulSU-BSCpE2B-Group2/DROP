@@ -79,10 +79,11 @@ class MainMenu:
                     if self.mouse_coordinate[
                         1] < self.button.settings_button_rect.y + self.button.settings_button_rect.height:
                         # 400 x 88 is proportional to the rect size of the settings button
-                        self.button.settings_button_enlarged = pg.transform.smoothscale(self.button.settings_button, (400, 88))
+                        self.button.settings_button_enlarged = pg.transform.smoothscale(self.button.settings_button, (140, 140))
                         self.button.settings_button_enlarged_rect = self.button.settings_button_enlarged.get_rect()
                         self.button.settings_button_enlarged_rect.center = self.button.settings_button_rect.center
                         screen.blit(self.button.settings_button_enlarged, self.button.settings_button_enlarged_rect)
+                        draw_text('Settings', 25, white, self.button.settings_button_rect.centerx, height / 2 - 10)
 
         # hover checker for start button
         screen.blit(self.button.start_button, self.button.start_button_rect)
@@ -95,10 +96,12 @@ class MainMenu:
                         1] < self.button.start_button_rect.y + self.button.start_button_rect.height:
                         # 400 x 89 is proportional to the rect size of the start button
                         self.button.start_button_enlarged = pg.transform.smoothscale(self.button.start_button,
-                                                                                        (400, 89))
+                                                                                        (140, 140))
                         self.button.start_button_enlarged_rect = self.button.start_button_enlarged.get_rect()
                         self.button.start_button_enlarged_rect.center = self.button.start_button_rect.center
                         screen.blit(self.button.start_button_enlarged, self.button.start_button_enlarged_rect)
+                        draw_text('Play', 25, white, self.button.start_button_rect.centerx,
+                                  height / 2 - 10)
 
         screen.blit(self.logo.logo, self.logo.position)
 
@@ -110,10 +113,39 @@ class MainMenu:
                 if self.mouse_coordinate.y > self.button.exit_button_rect.y:
                     if self.mouse_coordinate.y < self.button.exit_button_rect.y + self.button.exit_button_rect.height:
                         self.button.exit_button_enlarged = pg.transform.smoothscale(self.button.exit_button,
-                                                                                     (110, 104))
+                                                                                     (140, 140))
                         self.button.exit_button_enlarged_rect = self.button.exit_button_enlarged.get_rect()
                         self.button.exit_button_enlarged_rect.center = self.button.exit_button_rect.center
                         screen.blit(self.button.exit_button_enlarged, self.button.exit_button_enlarged_rect)
+                        draw_text('Exit', 25, white, self.button.exit_button_rect.centerx, height / 2 - 10)
+
+        # hover checker for credits button
+        screen.blit(self.button.credits_button, self.button.credits_button_rect)
+
+        if self.mouse_coordinate.x > self.button.credits_button_rect.x:
+            if self.mouse_coordinate.x < self.button.credits_button_rect.x + self.button.credits_button_rect.width:
+                if self.mouse_coordinate.y > self.button.credits_button_rect.y:
+                    if self.mouse_coordinate.y < self.button.credits_button_rect.y + self.button.credits_button_rect.height:
+                        self.button.credits_button_enlarged = pg.transform.smoothscale(self.button.credits_button,
+                                                                                     (140, 140))
+                        self.button.credits_button_enlarged_rect = self.button.credits_button_enlarged.get_rect()
+                        self.button.credits_button_enlarged_rect.center = self.button.credits_button_rect.center
+                        screen.blit(self.button.credits_button_enlarged, self.button.credits_button_enlarged_rect)
+                        draw_text('Credits', 25, white, self.button.credits_button_rect.centerx, height/2 - 10)
+
+        # hover checker for how-to button
+        screen.blit(self.button.how_to_button, self.button.how_to_button_rect)
+
+        if self.mouse_coordinate.x > self.button.how_to_button_rect.x:
+            if self.mouse_coordinate.x < self.button.how_to_button_rect.x + self.button.how_to_button_rect.width:
+                if self.mouse_coordinate.y > self.button.how_to_button_rect.y:
+                    if self.mouse_coordinate.y < self.button.how_to_button_rect.y + self.button.how_to_button_rect.height:
+                        self.button.how_to_button_enlarged = pg.transform.smoothscale(self.button.how_to_button,
+                                                                                     (140, 140))
+                        self.button.how_to_button_enlarged_rect = self.button.how_to_button_enlarged.get_rect()
+                        self.button.how_to_button_enlarged_rect.center = self.button.how_to_button_rect.center
+                        screen.blit(self.button.how_to_button_enlarged, self.button.how_to_button_enlarged_rect)
+                        draw_text('How To Play', 25, white, self.button.how_to_button_rect.centerx, height / 2 - 10)
 
         if self.show_settings:
             settings_overlay_with_opacity = pg.Surface((WIDTH, height), pg.SRCALPHA)
@@ -125,6 +157,7 @@ class MainMenu:
             else:
                 self.settings_screen.settings_overlay.convert_alpha()
                 screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
+
         pg.display.flip()
 
     def events(self):
@@ -264,18 +297,32 @@ class PlanetMars:
 class Buttons:
     def __init__(self):
         # initialize asset for settings button
-        self.settings_button = pg.image.load('assets/main_menu/SETTINGS.png').convert_alpha()
+        self.settings_button = pg.image.load('assets/main_menu/settingss.png').convert_alpha()
+        self.settings_button = pg.transform.smoothscale(self.settings_button, (120, 120))
         self.settings_button_rect = self.settings_button.get_rect()
         # initialize asset for start button
-        self.start_button = pg.image.load('assets/main_menu/START.png').convert_alpha()
+        self.start_button = pg.image.load('assets/main_menu/play.png').convert_alpha()
+        self.start_button = pg.transform.smoothscale(self.start_button, (120, 120))
         self.start_button_rect = self.start_button.get_rect()
         # initialize asset for exit button
-        self.exit_button = pg.image.load('assets/settings_menu/x.png').convert_alpha()
+        self.exit_button = pg.image.load('assets/main_menu/exit.png').convert_alpha()
+        self.exit_button = pg.transform.smoothscale(self.exit_button, (120, 120))
         self.exit_button_rect = self.exit_button.get_rect()
+        # initialize asset for how-to button
+        self.how_to_button = pg.image.load('assets/main_menu/how-to-play.png').convert_alpha()
+        self.how_to_button = pg.transform.smoothscale(self.how_to_button, (120, 120))
+        self.how_to_button_rect = self.how_to_button.get_rect()
+        # initialize asset for credits button
+        self.credits_button = pg.image.load('assets/main_menu/credits.png').convert_alpha()
+        self.credits_button = pg.transform.smoothscale(self.credits_button, (120, 120))
+        self.credits_button_rect = self.credits_button.get_rect()
         # set position for the buttons
-        self.settings_button_rect.center = (WIDTH / 2, height / 2 + 140)
-        self.start_button_rect.center = (WIDTH / 2, height / 2 + 30)
-        self.exit_button_rect.center = (WIDTH / 2, height - height / 6)
+        self.credits_button_rect.center = (WIDTH / 2 + self.how_to_button_rect.width + 125, height / 2 + 100)
+        self.how_to_button_rect.center = (WIDTH / 2 + 80, height / 2 + 100)
+        self.settings_button_rect.center = (WIDTH / 2 - 80, height / 2 + 100)
+        self.start_button_rect.center = (WIDTH / 2 - self.how_to_button_rect.width - 125, height / 2 + 100)
+        self.exit_button_rect.center = (WIDTH / 2, height / 2 + 270)
+
 
 
 class SettingsScreen:
