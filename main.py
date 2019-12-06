@@ -16,12 +16,7 @@ TELEPORT_EVENT = pg.USEREVENT + 2
 
 class Game:
     def __init__(self):
-        # initialize game window, sound loader, screen and window title
-        pg.mixer.pre_init(44100, -16, 2, 2048)
-        pg.mixer.init()
-        pg.init()
         self.screen = screen     # add pg.FULLSCREEN in settings.py if you want to full screen
-        pg.display.set_caption(title)
 
         # load the images for background in preparation for scrolling function at draw function inside game loop
         self.bg = pg.image.load('bin/assets/game_screen/bg-darker.png').convert_alpha()
@@ -45,9 +40,10 @@ class Game:
         self.sound_dir = path.join(self.asset_dir, 'sounds')
         self.damaged_sound = pg.mixer.Sound(path.join(self.sound_dir, 'DAMAGED.wav'))
 
-    def new(self):
+    def new(self, mute):
         # starting a new game
         # set CONSTANT variables
+        self.mute = mute    # mute checker
         self.score = 0
         self.running = True
         self.slow = False
@@ -95,13 +91,15 @@ class Game:
 
     def run(self):
         # Game loop
-        pg.mixer.music.play(loops=-1)
+        if not self.mute:
+            pg.mixer.music.play(loops=-1)
         while self.running:
             clock.tick(fps)
             self.events()
             self.update()
             self.draw()
-        pg.mixer.music.fadeout(500)
+        if not self.mute:
+            pg.mixer.music.fadeout(500)
 
     def update(self):
         # game loop update
@@ -121,9 +119,7 @@ class Game:
         if 2 < self.speed < 3:
             self.friction = -0.05
         if 3 < self.speed < 4:
-            self.friction = -0.03
-
-        #print("Speed is now: {}".format(self.speed))
+            self.friction = -0.04
 
         # if slow is activated, speed is halved
         if self.slow:
@@ -149,7 +145,7 @@ class Game:
                 else:
                     rect.width += 134
 
-        # slow platform power up algorithm spawn
+            # slow platform power up spawn algorithm
             self.generate_slow_platform = random.randint(0, 10)
             power_up, power_up_rect = spawn_power_up(self.generate_slow_platform, self.height_platform)
             for n in power_up:
@@ -161,7 +157,7 @@ class Game:
                 else:
                     power_up_rect.width += 134
 
-        # tp power up algorithm spawn
+            # tp power up spawn algorithm
             self.generate_tp_powerup = random.randint(0, 8)
             tp_power_up, tp_power_up_rect = spawn_power_up(self.generate_tp_powerup, self.height_platform)
             for s in tp_power_up:
@@ -173,9 +169,8 @@ class Game:
                 else:
                     tp_power_up_rect.width += 134
 
-            # after all that set reset current interval
+            # after all that reset current interval to 0
             self.currentInterval = 0
-
 
         # if power up leaves the screen, kill it.
         for slowdown_platform in self.slowplatformpowerup:
@@ -208,10 +203,10 @@ class Game:
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                self.player.pos.y = hits[0].rect.top + 3
+                self.player.pos.y = hits[0].rect.top
                 self.player.vel.y = 0
 
-        # if player reaches 1/4 from the bottom of the screen, camera should follow the player position
+        # if player reaches 1/4 of the area from the bottom of the screen, camera should follow the player position
         if self.player.rect.bottom > (height / 4) * 3:
             self.score += 1
             self.currentInterval += 4
@@ -230,9 +225,10 @@ class Game:
             self.teleport = False
 
         # if player reaches spike, player dies.
-        if self.player.rect.top < 0:
-            self.damaged_sound.play()
-            self.running = False
+        if pg.time.get_ticks() > 5000:
+            if self.player.rect.top < 60:
+                self.damaged_sound.play()
+                self.running = False
 
         # over time, alpha count falls for screen flash found in draw function
         self.alpha -= 5
@@ -274,7 +270,7 @@ class Game:
                 elif event.key == pg.K_e:
                     # pressing 'e' should reset the game
                     self.platforms.empty()
-                    self.new()
+                    self.new(self.mute)
                     # pressing spaces should pause the screen
                 elif event.key == pg.K_SPACE:
                     self.pause_screen()
@@ -298,7 +294,7 @@ class Game:
         screen.blit(self.spikes, self.spikes_rect)
 
         # draw and update the score
-        draw_text('SCORE: ' + str(self.score), 22, white, WIDTH / 2, 50)
+        draw_text('SCORE: ' + str(self.score), 22, white, WIDTH / 2, 75)
 
         # white flash
         if self.alpha > 0:
@@ -317,15 +313,16 @@ class Game:
         return self.pause
 
 
-# turn 'g' into an object of Game class, essentially initializing pygame
-g = Game()
 # turn 'mm' into an object of MainMenu class
 mm = MainMenu()
+# turn 'g' into an object of Game class, essentially initializing pygame
+g = Game()
 # loop that makes restarting work. will only be broken by break statements
+g.mute = False
 while True:
     # assign show_start_screen() to run variable to tell whether the return value of show_start_screen()/
     # / is true or false
-    mm.new()
+    mm.new(g.mute)
     # if show_start_screen() returned false, break the loop, ending the program.
     if not mm.running:
         # else, initialize the game loop (which is the 'new' function) inside the Game class
@@ -335,7 +332,7 @@ while True:
             while True:
                 # start animation sequence and initialize new game function & loop
                 start_game_animation_sequence()
-                g.new()
+                g.new(mm.mute)
                 # turn 'go' into an object of GameOver class
                 go = GameOverScreen(g.score, g.highscore)
                 # if player dies, game over screen runs

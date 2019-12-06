@@ -5,7 +5,11 @@ vec = pg.math.Vector2
 
 class MainMenu:
     def __init__(self):
-        # initialize screen
+        # initialize game window, sound loader, screen and window title
+        pg.mixer.pre_init(44100, -16, 2, 2048)
+        pg.mixer.init()
+        pg.init()
+        pg.display.set_caption(title)
         self.screen = screen
 
         # initialize background 1 & 2
@@ -27,14 +31,16 @@ class MainMenu:
         self.sound_dir = path.join(directory, 'assets\\sounds')
         self.item_select = pg.mixer.Sound(path.join(self.sound_dir, 'BUTTON SELECT.wav'))
 
+        self.mute = False
 
-    def new(self):
+
+    def new(self, mute):
+        self.mute = mute
         self.running = True
         self.timer = 0
         self.alpha = 0
         self.alpha_settings = 0
         self.show_settings = False
-        self.mute = False
         self.background = vec(0, 0)
         self.background2 = vec(self.bg_rect.width, 0)
         # create the instance where the glow is positioned
@@ -46,7 +52,8 @@ class MainMenu:
         self.run()
 
     def run(self):
-        pg.mixer.music.play(loops=-1)
+        if not self.mute:
+            pg.mixer.music.play(loops=-1)
         while self.running:
             clock.tick(fps)
             self.events()
@@ -355,10 +362,10 @@ class SettingsScreen:
         self.settings_overlay_rect.center = (WIDTH / 2, height / 2)
         self.music_option_on = pg.image.load('bin/assets/settings_menu/on.png').convert_alpha()
         self.music_option_on_rect = self.music_option_on.get_rect()
-        self.music_option_on_rect.center = (370, 374)
+        self.music_option_on_rect.center = (372, 374)
         self.music_option_off = pg.image.load('bin/assets/settings_menu/off.png').convert_alpha()
         self.music_option_off_rect = self.music_option_off.get_rect()
-        self.music_option_off_rect.center = (390, 374)
+        self.music_option_off_rect.center = (self.music_option_on_rect.centerx + self.music_option_on_rect.width + 2, 374)
 
 
 class Comets:
