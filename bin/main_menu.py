@@ -1,4 +1,4 @@
-from settings import *
+from .settings import *
 
 vec = pg.math.Vector2
 
@@ -9,8 +9,8 @@ class MainMenu:
         self.screen = screen
 
         # initialize background 1 & 2
-        self.bg = pg.image.load('assets/main_menu/bg-darker-ingame.png').convert_alpha()
-        self.bg2 = pg.image.load('assets/main_menu/bg-darker-ingame.png').convert_alpha()
+        self.bg = pg.image.load('bin/assets/main_menu/bg-darker-ingame.png').convert_alpha()
+        self.bg2 = pg.image.load('bin/assets/main_menu/bg-darker-ingame.png').convert_alpha()
         self.bg_rect = self.bg.get_rect()
 
         # initialize the required classes
@@ -23,26 +23,37 @@ class MainMenu:
         self.comets = Comets()
         self.how_to_play = HowToPlay()
 
+        # initialize the required sounds
+        self.sound_dir = path.join(directory, 'assets\\sounds')
+        self.item_select = pg.mixer.Sound(path.join(self.sound_dir, 'BUTTON SELECT.wav'))
+
+
     def new(self):
         self.running = True
         self.timer = 0
         self.alpha = 0
         self.alpha_settings = 0
         self.show_settings = False
+        self.mute = False
         self.background = vec(0, 0)
         self.background2 = vec(self.bg_rect.width, 0)
         # create the instance where the glow is positioned
         self.planet_mars.glow_new(self.timer)
         self.planet_venus.glow_new(self.timer)
         self.planet_earth.glow_new(self.timer)
+        # load the background music
+        pg.mixer.music.load(path.join(self.sound_dir, 'MAIN MENU BGM (SUGGESTION 2).mp3'))
         self.run()
 
     def run(self):
+        pg.mixer.music.play(loops=-1)
         while self.running:
             clock.tick(fps)
             self.events()
             self.update()
             self.draw()
+        if not self.mute:
+            pg.mixer.music.fadeout(500)
 
     def update(self):
         if self.show_settings:
@@ -52,6 +63,7 @@ class MainMenu:
                 self.alpha_settings += 10
         self.background, self.background2 = scrolling_background(-2, 0, self.background, self.background2, self.bg_rect)
         self.mouse_coordinate = vec(pg.mouse.get_pos())
+        # print("Mouse coordinate is at: {}".format(self.mouse_coordinate))
         self.planet_mars.glow_update()
         self.planet_venus.glow_update()
         self.planet_earth.glow_update()
@@ -59,7 +71,6 @@ class MainMenu:
     def draw(self):
         screen.blit(self.bg, self.background)
         screen.blit(self.bg2, self.background2)
-        # insert in this line the glowy shrink and grow thingies
         screen.blit(self.comets.comets_glow, self.comets.comets_glow_rect)
         screen.blit(self.comets.comets, self.comets.comets_rect)
         screen.blit(self.planet_mars.mars, self.planet_mars.mars_rect)
@@ -68,6 +79,7 @@ class MainMenu:
         screen.blit(self.planet_venus.venus, self.planet_venus.venus_rect)
         screen.blit(self.planet_earth.earth_glow, self.planet_earth.earth_glow_rect)
         screen.blit(self.planet_earth.earth, self.planet_earth.earth_rect)
+        screen.blit(self.logo.logo, self.logo.position)
 
         # hover checker for settings button
         screen.blit(self.button.settings_button, self.button.settings_button_rect)
@@ -103,7 +115,6 @@ class MainMenu:
                         draw_text('Play', 25, white, self.button.start_button_rect.centerx,
                                   height / 2 - 10)
 
-        screen.blit(self.logo.logo, self.logo.position)
 
         # hover checker for exit button
         screen.blit(self.button.exit_button, self.button.exit_button_rect)
@@ -117,7 +128,6 @@ class MainMenu:
                         self.button.exit_button_enlarged_rect = self.button.exit_button_enlarged.get_rect()
                         self.button.exit_button_enlarged_rect.center = self.button.exit_button_rect.center
                         screen.blit(self.button.exit_button_enlarged, self.button.exit_button_enlarged_rect)
-                        draw_text('Exit', 25, white, self.button.exit_button_rect.centerx, height / 2 - 10)
 
         # hover checker for credits button
         screen.blit(self.button.credits_button, self.button.credits_button_rect)
@@ -151,12 +161,12 @@ class MainMenu:
             settings_overlay_with_opacity = pg.Surface((WIDTH, height), pg.SRCALPHA)
             settings_overlay_with_opacity.fill((100, 100, 100, self.alpha))
             screen.blit(settings_overlay_with_opacity, (0, 0))
-            if self.alpha_settings < 255 or self.alpha < 100:
-                blit_alpha(screen, self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect,
-                           self.alpha_settings)
+            screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
+            if not self.mute:
+                screen.blit(self.settings_screen.music_option_on, self.settings_screen.music_option_on_rect)
             else:
-                self.settings_screen.settings_overlay.convert_alpha()
-                screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
+                screen.blit(self.settings_screen.music_option_off, self.settings_screen.music_option_off_rect)
+
 
         pg.display.flip()
 
@@ -175,14 +185,25 @@ class MainMenu:
                             if self.mouse_coordinate.y > self.settings_screen.settings_overlay_rect.y:
                                 if self.mouse_coordinate.y < self.settings_screen.settings_overlay_rect.y + 93:
                                     self.show_settings = False
+                                    self.item_select.play()
+                    if not self.mute:
+                        if self.mouse_coordinate.x > self.settings_screen.music_option_off_rect.x:
+                            if self.mouse_coordinate.x < self.settings_screen.music_option_off_rect.x + self.settings_screen.music_option_off_rect.width:
+                                if self.mouse_coordinate.y > self.settings_screen.music_option_off_rect.y:
+                                    if self.mouse_coordinate.y < self.settings_screen.music_option_off_rect.y + self.settings_screen.music_option_off_rect.height:
+                                        self.mute = True
+                                        self.item_select.play()
+                                        pg.mixer.music.stop()
+                    else:
+                        if self.mouse_coordinate.x > self.settings_screen.music_option_on_rect.x:
+                            if self.mouse_coordinate.x < self.settings_screen.music_option_on_rect.x + self.settings_screen.music_option_on_rect.width:
+                                if self.mouse_coordinate.y > self.settings_screen.music_option_on_rect.y:
+                                    if self.mouse_coordinate.y < self.settings_screen.music_option_on_rect.y + self.settings_screen.music_option_on_rect.height:
+                                        self.mute = False
+                                        self.item_select.play()
+                                        pg.mixer.music.play(loops=-1)
+
             else:
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_RETURN:
-                        self.running = False
-                        self.exit = False
-                    if event.key == pg.K_ESCAPE:
-                        self.running = False
-                        self.exit = True
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if self.mouse_coordinate[0] > self.button.start_button_rect.x:
                         if self.mouse_coordinate[
@@ -192,6 +213,7 @@ class MainMenu:
                                     1] < self.button.start_button_rect.y + self.button.start_button_rect.height:
                                     self.running = False
                                     self.exit = False
+                                    self.item_select.play()
                     if self.mouse_coordinate[0] > self.button.settings_button_rect.x:
                         if self.mouse_coordinate[
                             0] < self.button.settings_button_rect.x + self.button.settings_button_rect.width:
@@ -201,17 +223,19 @@ class MainMenu:
                                     self.alpha = 0
                                     self.alpha_settings = 0
                                     self.show_settings = True
+                                    self.item_select.play()
                     if self.mouse_coordinate.x > self.button.exit_button_rect.x:
                         if self.mouse_coordinate.x < self.button.exit_button_rect.x + self.button.exit_button_rect.width:
                             if self.mouse_coordinate.y > self.button.exit_button_rect.y:
                                 if self.mouse_coordinate.y < self.button.exit_button_rect.y + self.button.exit_button_rect.height:
                                     self.running = False
                                     self.exit = True
+                                    self.item_select.play()
 
 
 class Logo:
     def __init__(self):
-        self.logo = pg.image.load('assets/main_menu/TITLE.png').convert_alpha()
+        self.logo = pg.image.load('bin/assets/main_menu/TITLE.png').convert_alpha()
         self.logo_rect = self.logo.get_rect()
         self.logo_rect.center = (WIDTH / 2, height / 2)
         self.position = vec(WIDTH / 2 - self.logo_rect.top, (height / 2) - self.logo_rect.left - 130)
@@ -219,9 +243,9 @@ class Logo:
 
 class PlanetVenus:
     def __init__(self):
-        self.venus = pg.image.load('assets/main_menu/4.png').convert_alpha()
+        self.venus = pg.image.load('bin/assets/main_menu/4.png').convert_alpha()
         self.venus_rect = self.venus.get_rect()
-        self.venus_glow = pg.image.load('assets/main_menu/3.png').convert_alpha()
+        self.venus_glow = pg.image.load('bin/assets/main_menu/3.png').convert_alpha()
         self.venus_glow_rect = self.venus_glow.get_rect()
         # set position for the planet mars and its glow
         self.position = (WIDTH / 9, height / 2 + 70)
@@ -235,7 +259,7 @@ class PlanetVenus:
 
     def glow_update(self):
         self.venus_glow, self.venus_glow_rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink(
-            'assets/main_menu/3.png',
+            'bin/assets/main_menu/3.png',
             150,
             self.position,
             self.timer,
@@ -245,9 +269,9 @@ class PlanetVenus:
 
 class PlanetEarth:
     def __init__(self):
-        self.earth = pg.image.load('assets/main_menu/2.png').convert_alpha()
+        self.earth = pg.image.load('bin/assets/main_menu/2.png').convert_alpha()
         self.earth_rect = self.earth.get_rect()
-        self.earth_glow = pg.image.load('assets/main_menu/1.png').convert_alpha()
+        self.earth_glow = pg.image.load('bin/assets/main_menu/1.png').convert_alpha()
         self.earth_glow_rect = self.earth_glow.get_rect()
         # set position for the planet earth and its glow
         self.position = (WIDTH / 4, height / 4 - 50)
@@ -261,7 +285,7 @@ class PlanetEarth:
 
     def glow_update(self):
         self.earth_glow, self.earth_glow_rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink(
-            'assets/main_menu/1.png',
+            'bin/assets/main_menu/1.png',
             50,
             self.position,
             self.timer,
@@ -271,9 +295,9 @@ class PlanetEarth:
 
 class PlanetMars:
     def __init__(self):
-        self.mars = pg.image.load('assets/main_menu/6.png').convert_alpha()
+        self.mars = pg.image.load('bin/assets/main_menu/6.png').convert_alpha()
         self.mars_rect = self.mars.get_rect()
-        self.mars_glow = pg.image.load('assets/main_menu/5.png').convert_alpha()
+        self.mars_glow = pg.image.load('bin/assets/main_menu/5.png').convert_alpha()
         self.mars_glow_rect = self.mars_glow.get_rect()
         self.position_glow = (WIDTH - WIDTH / 8 + 6, height / 8 + 2)
         self.mars_rect.center = (WIDTH - WIDTH / 8, height / 8)
@@ -286,7 +310,7 @@ class PlanetMars:
 
     def glow_update(self):
         self.mars_glow, self.mars_glow_rect, self.timer, self.scale_size_x, self.scale_size_y = grow_shrink(
-            'assets/main_menu/5.png',
+            'bin/assets/main_menu/5.png',
             100,
             self.position_glow,
             self.timer,
@@ -297,23 +321,23 @@ class PlanetMars:
 class Buttons:
     def __init__(self):
         # initialize asset for settings button
-        self.settings_button = pg.image.load('assets/main_menu/settingss.png').convert_alpha()
+        self.settings_button = pg.image.load('bin/assets/main_menu/settingss.png').convert_alpha()
         self.settings_button = pg.transform.smoothscale(self.settings_button, (120, 120))
         self.settings_button_rect = self.settings_button.get_rect()
         # initialize asset for start button
-        self.start_button = pg.image.load('assets/main_menu/play.png').convert_alpha()
+        self.start_button = pg.image.load('bin/assets/main_menu/play.png').convert_alpha()
         self.start_button = pg.transform.smoothscale(self.start_button, (120, 120))
         self.start_button_rect = self.start_button.get_rect()
         # initialize asset for exit button
-        self.exit_button = pg.image.load('assets/main_menu/exit.png').convert_alpha()
+        self.exit_button = pg.image.load('bin/assets/main_menu/exit.png').convert_alpha()
         self.exit_button = pg.transform.smoothscale(self.exit_button, (120, 120))
         self.exit_button_rect = self.exit_button.get_rect()
         # initialize asset for how-to button
-        self.how_to_button = pg.image.load('assets/main_menu/how-to-play.png').convert_alpha()
+        self.how_to_button = pg.image.load('bin/assets/main_menu/how-to-play.png').convert_alpha()
         self.how_to_button = pg.transform.smoothscale(self.how_to_button, (120, 120))
         self.how_to_button_rect = self.how_to_button.get_rect()
         # initialize asset for credits button
-        self.credits_button = pg.image.load('assets/main_menu/credits.png').convert_alpha()
+        self.credits_button = pg.image.load('bin/assets/main_menu/credits.png').convert_alpha()
         self.credits_button = pg.transform.smoothscale(self.credits_button, (120, 120))
         self.credits_button_rect = self.credits_button.get_rect()
         # set position for the buttons
@@ -324,18 +348,23 @@ class Buttons:
         self.exit_button_rect.center = (WIDTH / 2, height / 2 + 270)
 
 
-
 class SettingsScreen:
     def __init__(self):
-        self.settings_overlay = pg.image.load('assets/settings_menu/SETTINGS.png').convert_alpha()
+        self.settings_overlay = pg.image.load('bin/assets/settings_menu/SETTINGS.png').convert_alpha()
         self.settings_overlay_rect = self.settings_overlay.get_rect()
         self.settings_overlay_rect.center = (WIDTH / 2, height / 2)
+        self.music_option_on = pg.image.load('bin/assets/settings_menu/on.png').convert_alpha()
+        self.music_option_on_rect = self.music_option_on.get_rect()
+        self.music_option_on_rect.center = (370, 374)
+        self.music_option_off = pg.image.load('bin/assets/settings_menu/off.png').convert_alpha()
+        self.music_option_off_rect = self.music_option_off.get_rect()
+        self.music_option_off_rect.center = (390, 374)
 
 
 class Comets:
     def __init__(self):
-        self.comets = pg.image.load('assets/main_menu/bg-09.png').convert_alpha()
-        self.comets_glow = pg.image.load('assets/main_menu/bg-08.png').convert_alpha()
+        self.comets = pg.image.load('bin/assets/main_menu/bg-09.png').convert_alpha()
+        self.comets_glow = pg.image.load('bin/assets/main_menu/bg-08.png').convert_alpha()
         self.comets_rect = self.comets.get_rect()
         self.comets_glow_rect = self.comets_glow.get_rect()
         self.comets_rect.center = (WIDTH / 2 + 200, height / 2 - 90 + 270)

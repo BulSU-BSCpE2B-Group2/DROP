@@ -1,7 +1,6 @@
 # Sprite classes for platform game
-import pygame as pg
 import random
-from settings import *
+from .settings import *
 
 vec = pg.math.Vector2
 
@@ -10,31 +9,75 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
         self.game = game
-        self.image = pg.image.load('assets/characters/character-01.png')
-        self.rect = self.image.get_rect()
-        self.rect.width = 30
-        self.rect.height = 30
-        self.rect.center = (WIDTH / 2, height / 2)
         self.pos = vec(WIDTH / 2, height / 2)
         self.vel = vec(0, 0)
         self.accel = vec(0, 0)
-        self.cc_step = 1
-        self.base_color = next(colors)
-        self.next_color = next(colors)
-        self.current_color = self.base_color
+        self.next_frame = current_ticks()
+        self.frame = 0
+        self.frames = 6  # <====== frames that are contained in your gif spritesheet
 
-    def update(self):
+        self.images = []
+        img = pg.image.load('bin/assets/characters/spritesheet_astronaut.gif').convert_alpha()
+        self.originalWidth = img.get_width() // self.frames
+        self.originalHeight = img.get_height()
+
+        self.x = 0
+        for frameNo in range(self.frames):
+            frameSurf = pg.Surface((self.originalWidth, self.originalHeight), pg.SRCALPHA, 32)
+            frameSurf.blit(img, (self.x, 0))
+            self.images.append(frameSurf.copy())
+            self.x -= self.originalWidth
+        self.image = pg.Surface.copy(self.images[0])
+
+        self.currentImage = 0
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (0, 0)
+        self.mask = pg.mask.from_surface(self.image)
+        self.angle = 0
+        self.scale = 1
+
+    def addImage(self, filename):
+        self.images.append(pg.image.load(filename).convert_alpha())
+
+    def changeImage(self, index):
+        self.currentImage = index
+        if self.angle == 0 and self.scale == 1:
+            self.image = self.images[index]
+        else:
+            self.image = pg.transform.rotozoom(self.images[self.currentImage], -self.angle, self.scale)
+        oldcenter = self.rect.center
+        self.rect = self.image.get_rect()
+        originalRect = self.images[self.currentImage].get_rect()
+        self.originalWidth = originalRect.width
+        self.originalHeight = originalRect.height
+        self.rect.center = oldcenter
+        self.mask = pg.mask.from_surface(self.image)
+        #print("Astronaut dimension is (WIDTH: {}, HEIGHT: {})".format(self.rect.width, self.rect.height))
+
+    def update(self, friction):
         self.accel = vec(0, player_gravity)
         # self.image.fill(self.cycle_color())
+        if current_ticks() > self.next_frame:
+            self.frame = (self.frame+1)%2
+            self.next_frame += 100
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
             self.accel.x = -player_accel
 
-        if keys[pg.K_RIGHT]:
+            # from StevePaget
+            self.changeImage(1*2 + self.frame)
+
+        elif keys[pg.K_RIGHT]:
             self.accel.x = player_accel
 
+            # from StevePaget
+            self.changeImage(2*2 + self.frame)
+
+        else:
+            self.changeImage(0*2 + self.frame)
+
         # kinematics equation from the settings module
-        self.pos = kinematics(self.accel, self.vel, self.pos)
+        self.pos = kinematics(self.accel, self.vel, self.pos, friction)
         # wrap around the screen
         if self.pos.x > WIDTH - (player_width / 2):
             self.pos.x = WIDTH - player_width / 2
@@ -43,28 +86,11 @@ class Player(pg.sprite.Sprite):
 
         self.rect.midbottom = self.pos
 
-    def cycle_color(self):
-        change_bg_every_x_seconds = 3
-        number_of_steps = change_bg_every_x_seconds * fps
-
-        self.cc_step += 1
-        if self.cc_step < number_of_steps:
-            # (y-x)/number_of_steps calculates the amount of change per step required to
-            # fade one channel of the old color to the new color
-            # We multiply it with the current step counter
-            self.current_color = [x + (((y - x) / number_of_steps) * self.cc_step) for x, y in
-                             zip(pg.color.Color(self.base_color), pg.color.Color(self.next_color))]
-        else:
-            self.cc_step = 1
-            self.base_color = self.next_color
-            self.next_color = next(colors)
-        return self.current_color
-
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, position):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.image.load('assets/platform/platform-01.png').convert_alpha()
+        self.image = pg.image.load('bin/assets/platform/platform-02.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.position = position
         self.rect.center = self.position
@@ -73,8 +99,8 @@ class Platform(pg.sprite.Sprite):
 class SlowPlatformPowerUp(pg.sprite.Sprite):
     def __init__(self, position):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((10, 10))
-        self.image.fill(blue)
+        self.image = pg.image.load('bin/assets/game_screen/slowplatform.png').convert_alpha()
+        self.image = pg.transform.smoothscale(self.image, (20, 22))
         self.rect = self.image.get_rect()
         self.position = position
         self.rect.center = self.position
@@ -83,11 +109,12 @@ class SlowPlatformPowerUp(pg.sprite.Sprite):
 class TeleportPowerUp(pg.sprite.Sprite):
     def __init__(self, position):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((10, 10))
+        self.image = pg.Surface((10, 10), pg.SRCALPHA)
         self.image.fill(green)
         self.rect = self.image.get_rect()
         self.position = position
         self.rect.center = self.position
+
 
 def spawn_power_up(generate, pu_spawn_height):
     p_rect = pg.Rect(0, 0, WIDTH / 12, height + pu_spawn_height - 50)

@@ -1,5 +1,4 @@
-from settings import *
-import pygame as pg
+from .settings import *
 
 
 # run this as soon as the user hits enter to start the game

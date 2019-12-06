@@ -6,7 +6,7 @@
 
 import random
 import pygame as pg
-from sprites import *
+from bin import *
 
 font_name = pg.font.match_font(font_name)
 vec = pg.math.Vector2

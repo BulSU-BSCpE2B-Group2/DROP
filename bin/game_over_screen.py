@@ -1,4 +1,4 @@
-from settings import *
+from .settings import *
 import pygame as pg
 
 
@@ -9,7 +9,13 @@ class GameOverScreen:
         self.score = score
         self.highscore = highscore
 
+        self.asset_dir = path.join(directory, 'assets')
+        self.sound_dir = path.join(self.asset_dir, 'sounds')
+
+        self.death_sound = pg.mixer.Sound(path.join(self.sound_dir, 'SOUND FX (DEATH).wav'))
+
     def new(self):
+        self.death_sound.play()
         self.alpha = 0
         self.running = True
         self.restart = False

@@ -1,4 +1,4 @@
-import pygame as pg
+"""import pygame as pg
 import random
 from os import path
 from settings import *
@@ -6,7 +6,10 @@ from sprites import *
 from start_game_screen import *
 from game_over_screen import *
 from pause_screen import *
-from main_menu import *
+from main_menu import *"""
+
+from bin import *
+
 
 RESET_SPEED_EVENT = pg.USEREVENT + 1
 TELEPORT_EVENT = pg.USEREVENT + 2
@@ -14,17 +17,33 @@ TELEPORT_EVENT = pg.USEREVENT + 2
 class Game:
     def __init__(self):
         # initialize game window, sound loader, screen and window title
-        pg.init()
+        pg.mixer.pre_init(44100, -16, 2, 2048)
         pg.mixer.init()
-        self.screen = screen # add pg.FULLSCREEN in settings.py if you want to full screen
+        pg.init()
+        self.screen = screen     # add pg.FULLSCREEN in settings.py if you want to full screen
         pg.display.set_caption(title)
 
         # load the images for background in preparation for scrolling function at draw function inside game loop
-        self.bg = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
-        self.bg2 = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
-        self.bg3 = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
-        self.bg4 = pg.image.load('assets/game_screen/bg-darker.png').convert_alpha()
+        self.bg = pg.image.load('bin/assets/game_screen/bg-darker.png').convert_alpha()
+        self.bg2 = pg.image.load('bin/assets/game_screen/bg-darker.png').convert_alpha()
+        self.bg3 = pg.image.load('bin/assets/game_screen/bg-darker.png').convert_alpha()
+        self.bg4 = pg.image.load('bin/assets/game_screen/bg-darker.png').convert_alpha()
         self.bg_rect = self.bg.get_rect()
+
+        # load the image for spikes
+        self.spikes = pg.image.load('bin/assets/game_screen/spikes.png').convert_alpha()
+        self.spikes_rect = self.spikes.get_rect()
+        self.spikes_rect.topleft = (0, 0)
+
+        # will be used later for loading
+        self.slow_indicator = pg.Surface((WIDTH, height))
+        self.slow_indicator = self.slow_indicator.convert_alpha(self.slow_indicator)
+        self.slow_indicator.fill((0, 0, 125, 50))
+
+        # load sounds
+        self.asset_dir = path.join(directory, 'assets')
+        self.sound_dir = path.join(self.asset_dir, 'sounds')
+        self.damaged_sound = pg.mixer.Sound(path.join(self.sound_dir, 'DAMAGED.wav'))
 
     def new(self):
         # starting a new game
@@ -68,16 +87,21 @@ class Game:
         # load highscore data
         self.highscore = load_hs_data()
 
+        # load the background music
+        pg.mixer.music.load(path.join(self.sound_dir, 'IN-GAME BGM.mp3'))
+
         # run the main game loop
         self.run()
 
     def run(self):
         # Game loop
+        pg.mixer.music.play(loops=-1)
         while self.running:
             clock.tick(fps)
             self.events()
             self.update()
             self.draw()
+        pg.mixer.music.fadeout(500)
 
     def update(self):
         # game loop update
@@ -87,9 +111,19 @@ class Game:
         self.speed = 1 * self.multiplier * self.multiplier_powerup
 
         # if speed is more than 4, speed multiplier goes back to 0
-        if self.speed >= 4:
+        if self.speed >= 3.3:
             self.multiplier = 1
-        print(self.speed)
+
+        if 0 < self.speed < 1:
+            self.friction = player_friction
+        if 1 < self.speed < 2:
+            self.friction = -0.07
+        if 2 < self.speed < 3:
+            self.friction = -0.05
+        if 3 < self.speed < 4:
+            self.friction = -0.03
+
+        #print("Speed is now: {}".format(self.speed))
 
         # if slow is activated, speed is halved
         if self.slow:
@@ -188,8 +222,7 @@ class Game:
 
         if self.player.rect.bottom > height + 100:
             self.score += 30
-            self.player.pos = vec(WIDTH / 2, height/2 + 120)
-
+            self.player.pos = vec(self.player.pos.x, height - height / 8)
 
         # teleport checker
         if self.teleport:
@@ -198,6 +231,7 @@ class Game:
 
         # if player reaches spike, player dies.
         if self.player.rect.top < 0:
+            self.damaged_sound.play()
             self.running = False
 
         # over time, alpha count falls for screen flash found in draw function
@@ -210,7 +244,7 @@ class Game:
         self.background3, self.background4 = scrolling_background(-2, -1, self.background3, self.background4, self.bg_rect)
 
         # update the number of platforms, player and platform and slow_platform position
-        self.player.update()
+        self.player.update(self.friction)
         self.platforms.update()
         self.slowplatformpowerup.update()
         self.teleportpowerup.update()
@@ -260,8 +294,11 @@ class Game:
         self.player_sprite.draw(self.screen)
         self.platforms.draw(self.screen)
 
+        # draw the spikes
+        screen.blit(self.spikes, self.spikes_rect)
+
         # draw and update the score
-        draw_text(str(self.score), 22, white, WIDTH / 2, 50)
+        draw_text('SCORE: ' + str(self.score), 22, white, WIDTH / 2, 50)
 
         # white flash
         if self.alpha > 0:
@@ -270,9 +307,7 @@ class Game:
             screen.blit(flash, (0, 0))
 
         if self.slow:
-            slow_indicator = pg.Surface((WIDTH, height), pg.SRCALPHA)
-            slow_indicator.fill((0, 0, 255, 50))
-            screen.blit(slow_indicator, (0, 0))
+            screen.blit(self.slow_indicator, (0, 0))
 
         # *after* drawing everything, flip the display for changes to take effect on the window
         pg.display.flip()
@@ -305,7 +340,7 @@ while True:
                 go = GameOverScreen(g.score, g.highscore)
                 # if player dies, game over screen runs
                 go.new()
-                # if you want to restart, run sets to true then loop happens all over again.
+                # if you want to restart, go.restart sets to true then loop happens all over again.
                 if not go.running:
                     if go.restart:
                         continue
