@@ -1,13 +1,3 @@
-"""import pygame as pg
-import random
-from os import path
-from settings import *
-from sprites import *
-from start_game_screen import *
-from game_over_screen import *
-from pause_screen import *
-from main_menu import *"""
-
 from bin import *
 
 
@@ -73,6 +63,12 @@ class Game:
         self.player = Player(self)
         self.player_sprite.add(self.player)
         self.all_sprites.add(self.player)
+
+        self.pause = PauseScreen()
+        self.pause.exit = False
+
+        self.cnfrm_ext = ConfirmExitScreen()
+        self.cnfrm_ext.exit = False
 
         # assign the background used
         self.background = vec(0, 0)
@@ -225,10 +221,9 @@ class Game:
             self.teleport = False
 
         # if player reaches spike, player dies.
-        if pg.time.get_ticks() > 5000:
-            if self.player.rect.top < 60:
-                self.damaged_sound.play()
-                self.running = False
+        if self.player.rect.top < 0:
+            self.damaged_sound.play()
+            self.running = False
 
         # over time, alpha count falls for screen flash found in draw function
         self.alpha -= 5
@@ -266,14 +261,20 @@ class Game:
             if event.type == pg.KEYDOWN:
                 # if escape it should go to the game over screen
                 if event.key == pg.K_ESCAPE:
-                    self.running = False
-                elif event.key == pg.K_e:
-                    # pressing 'e' should reset the game
-                    self.platforms.empty()
-                    self.new(self.mute)
+                    self.confirm_exit()
+                    """elif event.key == pg.K_e:
+                        # pressing 'e' should reset the game
+                        self.platforms.empty()
+                        self.new(self.mute)"""
                     # pressing spaces should pause the screen
                 elif event.key == pg.K_SPACE:
                     self.pause_screen()
+
+        if self.pause.exit:
+            self.running = False
+
+        if self.cnfrm_ext.exit:
+            self.running = False
 
     def draw(self):
         # Game loop for drawing graphics
@@ -308,9 +309,11 @@ class Game:
         # *after* drawing everything, flip the display for changes to take effect on the window
         pg.display.flip()
 
-    def pause_screen(self): # pause screen
-        self.pause = fade_pause_animation()
-        return self.pause
+    def pause_screen(self):  # pause screen
+        self.pause.new()
+
+    def confirm_exit(self):
+        self.cnfrm_ext.new()
 
 
 # turn 'mm' into an object of MainMenu class
@@ -334,15 +337,18 @@ while True:
                 start_game_animation_sequence()
                 g.new(mm.mute)
                 # turn 'go' into an object of GameOver class
-                go = GameOverScreen(g.score, g.highscore)
-                # if player dies, game over screen runs
-                go.new()
+                if not g.pause.exit or g.cnfrm_ext.exit:
+                    go = GameOverScreen(g.score, g.highscore)
+                    # if player dies, game over screen runs
+                    go.new()
                 # if you want to restart, go.restart sets to true then loop happens all over again.
-                if not go.running:
-                    if go.restart:
-                        continue
+                    if not go.running:
+                        if go.restart:
+                            continue
                 # it puts you back to the outer loop, showing you the start_screen and giving you another choice to
                 # start the game or completely exit.
-                    else:
-                        break
+                        else:
+                            break
+                else:
+                    break
 pg.quit()
