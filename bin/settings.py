@@ -82,7 +82,7 @@ height = 768
 fps = 60
 font_style = 'verdana'
 highscore_textfile = 'highscore.txt'
-screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
+screen = pg.display.set_mode((WIDTH, height))
 clock = pg.time.Clock()
 font_name = pg.font.match_font(font_style)
 

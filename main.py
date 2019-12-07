@@ -38,6 +38,7 @@ class Game:
         self.running = True
         self.slow = False
         self.teleport = False
+        self.exit = False
         self.multiplier = 1
         self.height_platform = 700
         self.event_interval = 5000
@@ -73,6 +74,9 @@ class Game:
 
         self.cnfrm_ext = ConfirmExitScreen()
         self.cnfrm_ext.exit = False
+
+        self.go = GameOverScreen()
+        self.go.exit = False
 
         # assign the background used
         self.background = vec(0, 0)
@@ -228,8 +232,10 @@ class Game:
         if self.score > 10:
             spike_hit = pg.sprite.spritecollide(self.player, self.spikes, False, pg.sprite.collide_mask)
             if spike_hit:
-                self.running = False
+                self.game_over()
                 self.damaged_sound.play()
+                for player in self.player_sprite:
+                    player.kill()
 
         # over time, alpha count falls for screen flash found in draw function
         self.alpha -= 5
@@ -258,6 +264,7 @@ class Game:
             # check for closing window
             if event.type == pg.QUIT:
                 self.running = False
+                self.exit = True
             if event.type == RESET_SPEED_EVENT:
                 self.slow = False
                 pg.time.set_timer(RESET_SPEED_EVENT, 0)
@@ -299,7 +306,6 @@ class Game:
         self.platforms.draw(self.screen)
         self.spikes.draw(self.screen)
 
-
         # draw and update the score
         draw_text('SCORE: ' + str(self.score), 22, white, WIDTH / 2, 75)
 
@@ -321,6 +327,14 @@ class Game:
     def confirm_exit(self):
         self.cnfrm_ext.new()
 
+    def game_over(self):
+        self.go.new(self.score, self.highscore)
+        if self.go.exit:
+            self.running = False
+            self.exit = True
+        else:
+            self.running = False
+            self.exit = False
 
 
 # turn 'mm' into an object of MainMenu class
@@ -348,18 +362,11 @@ while True:
                 start_game_animation_sequence()
                 g.new(mm.mute)
                 # turn 'go' into an object of GameOver class
-                if not g.pause.exit and not g.cnfrm_ext.exit:
-                    go = GameOverScreen(g.score, g.highscore)
-                    # if player dies, game over screen runs
-                    go.new()
-                # if you want to restart, go.restart sets to true then loop happens all over again.
-                    if not go.running:
-                        if go.restart:
-                            continue
-                # it puts you back to the outer loop, showing you the start_screen and giving you another choice to
-                # start the game or completely exit.
-                        else:
-                            break
+                if not g.pause.exit and not g.cnfrm_ext.exit and not g.running:
+                    if g.exit or not g.go.restart:
+                        break
+                    else:
+                        continue
                 else:
                     break
 pg.quit()
