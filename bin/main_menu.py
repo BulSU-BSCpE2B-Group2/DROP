@@ -1,4 +1,5 @@
 from .settings import *
+from .credits import *
 
 vec = pg.math.Vector2
 
@@ -250,7 +251,13 @@ class MainMenu:
                                     self.running = False
                                     self.exit = True
                                     self.item_select.play()
-
+                    if self.mouse_coordinate.x > self.button.credits_button_rect.x:
+                        if self.mouse_coordinate.x < self.button.credits_button_rect.x + self.button.credits_button_rect.width:
+                            if self.mouse_coordinate.y > self.button.credits_button_rect.y:
+                                if self.mouse_coordinate.y < self.button.credits_button_rect.y + self.button.credits_button_rect.height:
+                                    self.item_select.play()
+                                    c = Credits()
+                                    c.new()
 
 class Logo:
     def __init__(self):

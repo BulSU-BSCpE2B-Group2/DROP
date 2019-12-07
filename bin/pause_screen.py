@@ -39,8 +39,8 @@ class PauseScreen:
         pg.draw.rect(self.surface, (0, 0, 0, 100), ((WIDTH - 10) - self.position_x, 0, 10, height))
         screen.blit(self.surface, (0, 0))
         draw_text('PAUSE', 65, white, WIDTH / 2, height / 2 - 50)
-        draw_text('Press ESC to exit.', 45, white, WIDTH / 2, height / 2 + 30)
-        draw_text('Press RETURN to continue.', 40, white, WIDTH / 2, height / 2 + 85)
+        draw_text('Press ESC to exit.', 25, white, WIDTH / 2, height / 2 + 30)
+        draw_text('Press RETURN to continue.', 25, white, WIDTH / 2, height / 2 + 85)
         pg.display.flip()
 
     def events(self):

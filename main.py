@@ -316,12 +316,17 @@ class Game:
         self.cnfrm_ext.new()
 
 
+
 # turn 'mm' into an object of MainMenu class
 mm = MainMenu()
 # turn 'g' into an object of Game class, essentially initializing pygame
 g = Game()
+# turn 'c' into an object of Credits class
+c = Credits()
 # loop that makes restarting work. will only be broken by break statements
+
 g.mute = False
+c.new()
 while True:
     # assign show_start_screen() to run variable to tell whether the return value of show_start_screen()/
     # / is true or false

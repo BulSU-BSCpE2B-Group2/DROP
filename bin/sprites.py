@@ -17,6 +17,7 @@ class Player(pg.sprite.Sprite):
 
         self.images = []
         img = pg.image.load('bin/assets/characters/spritesheet_astronaut.gif').convert_alpha()
+        img = pg.transform.smoothscale(img, (180, 40))
         self.originalWidth = img.get_width() // self.frames
         self.originalHeight = img.get_height()
 

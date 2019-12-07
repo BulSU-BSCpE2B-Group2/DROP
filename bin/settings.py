@@ -49,15 +49,6 @@ def scrolling_background(x_speed, y_speed, background, background2, bg_rect):
         background2.y = bg_rect.height
     return background, background2
 
-"""def blit_alpha(target, source, location, opacity):
-    x = location[0]
-    y = location[1]
-    temp = pg.Surface((source.get_width(), source.get_height()), pg.SRCALPHA).convert()
-    temp.blit(target, (-x, -y))
-    temp.blit(source, (0, 0))
-    temp.set_alpha(opacity)
-    target.blit(temp, location)"""
-
 def grow_shrink(directory, size_change_interval, position, timer, scale_size_x, scale_size_y):
     timer += 1
     if timer >= size_change_interval:
@@ -77,89 +68,11 @@ def grow_shrink(directory, size_change_interval, position, timer, scale_size_x, 
 
     return image, rect, timer, scale_size_x, scale_size_y
 
-def cycle_color(cc_step, next_color, base_color, current_color, colors):
-    change_bg_every_x_seconds = 3
-    number_of_steps = change_bg_every_x_seconds * fps
-
-    cc_step += 1
-    if cc_step < number_of_steps:
-        # (y-x)/number_of_steps calculates the amount of change per step required to
-        # fade one channel of the old color to the new color
-        # We multiply it with the current step counter
-        current_color = [x + (((y - x) / number_of_steps) * cc_step) for x, y in
-                         zip(pg.color.Color(base_color), pg.color.Color(next_color))]
-    else:
-        cc_step = 1
-        base_color = next_color
-        next_color = next(colors)
-    return current_color, cc_step, base_color, next_color
-
-# from StevePaget ============================== #
-spriteGroup = pg.sprite.OrderedUpdates()
-class newSprite(pg.sprite.Sprite):
-    def __init__(self, filename, frames = 1):
-        pg.sprite.Sprite.__init__(self)
-        self.images = []
-        img = pg.image.load(filename).convert_alpha()
-        self.originalWidth = img.get_width() // frames
-        self.originalHeight = img.get_height()
-        frameSurf = pg.Surface((self.originalWidth, self.originalHeight), pg.SRCALPHA, 32)
-        x = 0
-        for frameNo in range(frames):
-            frameSurf = pg.Surface((self.originalWidth, self.originalHeight), pg.SRCALPHA, 32)
-            frameSurf.blit(img, (x, 0))
-            self.images.append(frameSurf.copy())
-            x -= self.originalWidth
-        self.image = pg.Surface.copy(self.images[0])
-
-        self.currentImage = 0
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (0, 0)
-        self.mask = pg.mask.from_surface(self.image)
-        self.angle = 0
-        self.scale = 1
-
-    def addImage(self, filename):
-        self.images.append(pg.image.load(filename).convert_alpha())
-
-    def move(self, xpos, ypos, centre=False):
-        if centre:
-            self.rect.center = [xpos, ypos]
-        else:
-            self.rect.topleft = [xpos, ypos]
-
-    def changeImage(self, index):
-        self.currentImage = index
-        if self.angle == 0 and self.scale == 1:
-            self.image = self.images[index]
-        else:
-            self.image = pg.transform.rotozoom(self.images[self.currentImage], -self.angle, self.scale)
-        oldcenter = self.rect.center
-        self.rect = self.image.get_rect()
-        originalRect = self.images[self.currentImage].get_rect()
-        self.originalWidth = originalRect.width
-        self.originalHeight = originalRect.height
-        self.rect.center = oldcenter
-        self.mask = pg.mask.from_surface(self.image)
-
-def makeSprite(filename, frames=1):
-    thisSprite = newSprite(filename, frames)
-    return thisSprite
-
-def moveSprite(sprite, x, y, centre=False):
-    sprite.move(x, y, centre)
-
-def showSprite(sprite):
-    spriteGroup.add(sprite)
-
-def changeSpriteImage(sprite, index):
-    sprite.changeImage(index)
-
-def current_ticks(): # in StevePaget's video, this is clock()
+def current_ticks(): # this is clock()
     current_time = pg.time.get_ticks()
     return current_time
 
-#===================================================================#
+#======================= CONSTANTS ==============================#
 
 # game resolution and fps
 running = True
@@ -169,7 +82,7 @@ height = 768
 fps = 60
 font_style = 'verdana'
 highscore_textfile = 'highscore.txt'
-screen = pg.display.set_mode((WIDTH, height))
+screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
 clock = pg.time.Clock()
 font_name = pg.font.match_font(font_style)
 
@@ -185,13 +98,6 @@ platform_list = [(WIDTH / 2, height / 2 + 300), (WIDTH / 2 - 85, height / 2 + 30
                  (WIDTH / 2 - 85*2, height / 2 + 300), (WIDTH / 2 - 85*3, height / 2 + 300),
                  (WIDTH / 2 + 85, height / 2 + 300), (WIDTH / 2 + 85*2, height / 2 + 300),
                  (WIDTH / 2 + 85*3, height / 2 + 300)]
-
-# [((WIDTH / 2 - 50, height * 3 / 4), (100, 20)), ((125, height - 350), (100, 20)),
-                 # ((350, 200), (100, 20)), ((172, 100), (50, 20))]
-
-# gaps_1 = [()]
-
-# temporary (0, height - 40, width, 40),
 
 # color
 white = (255, 255, 255)
