@@ -169,6 +169,18 @@ class MainMenu:
             settings_overlay_with_opacity.fill((100, 100, 100, self.alpha))
             screen.blit(settings_overlay_with_opacity, (0, 0))
             screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
+            screen.blit(self.settings_screen.x, self.settings_screen.x_rect)
+
+            if self.mouse_coordinate.x > self.settings_screen.x_rect.x:
+                if self.mouse_coordinate.x < self.settings_screen.x_rect.x + self.settings_screen.x_rect.width:
+                    if self.mouse_coordinate.y > self.settings_screen.x_rect.y:
+                        if self.mouse_coordinate.y < self.settings_screen.x_rect.y + self.settings_screen.x_rect.height:
+                            self.settings_screen.x_rect_enlarged = pg.transform.smoothscale(self.settings_screen.x,
+                                                                                          (115, 108))
+                            self.settings_screen.x_rect_enlarged_rect = self.settings_screen.x_rect_enlarged.get_rect()
+                            self.settings_screen.x_rect_enlarged_rect.center = self.settings_screen.x_rect.center
+                            screen.blit(self.settings_screen.x_rect_enlarged, self.settings_screen.x_rect_enlarged_rect)
+
             if not self.mute:
                 screen.blit(self.settings_screen.music_option_on, self.settings_screen.music_option_on_rect)
             else:
@@ -366,6 +378,9 @@ class SettingsScreen:
         self.music_option_off = pg.image.load('bin/assets/settings_menu/off.png').convert_alpha()
         self.music_option_off_rect = self.music_option_off.get_rect()
         self.music_option_off_rect.center = (self.music_option_on_rect.centerx + self.music_option_on_rect.width + 2, 374)
+        self.x = pg.image.load('bin/assets/settings_menu/x.png').convert_alpha()
+        self.x_rect = self.x.get_rect()
+        self.x_rect.topright = self.settings_overlay_rect.topright
 
 
 class Comets:

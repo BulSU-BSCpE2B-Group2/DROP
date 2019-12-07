@@ -6,10 +6,10 @@ class ConfirmExitScreen:
         self.i = 0
         self.position_x = 0
         self.interval = 1000
-        self.exit = False
 
     def new(self):
         self.running = True
+        self.exit = False
         self.i = 0
         self.position_x = -10
         self.timer = 0
@@ -37,8 +37,8 @@ class ConfirmExitScreen:
         pg.draw.rect(self.surface, (125, 0, 0, 100), ((WIDTH - 10) - self.position_x, 0, 10, height))
         screen.blit(self.surface, (0, 0))
         draw_text('Are you sure you want to quit?', 45, white, WIDTH / 2, height / 2 - 30)
-        draw_text('Press RETURN to confirm', 35, white, WIDTH / 2, height / 2 + 45)
-        draw_text('Press ESC to cancel and continue', 35, white, WIDTH / 2, height / 2 + 95)
+        draw_text('Press RETURN to confirm', 15, white, WIDTH / 2, height / 2 + 45)
+        draw_text('Press ESC to cancel and continue', 15, white, WIDTH / 2, height / 2 + 95)
         pg.display.flip()
 
     def events(self):

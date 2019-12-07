@@ -259,14 +259,14 @@ class Game:
                 self.teleport = True
                 pg.time.set_timer(TELEPORT_EVENT, 0)
             if event.type == pg.KEYDOWN:
-                # if escape it should go to the game over screen
+                # if escape it should go to the confirm exit screen
                 if event.key == pg.K_ESCAPE:
                     self.confirm_exit()
                     """elif event.key == pg.K_e:
                         # pressing 'e' should reset the game
                         self.platforms.empty()
                         self.new(self.mute)"""
-                    # pressing spaces should pause the screen
+                # pressing spaces should pause the screen
                 elif event.key == pg.K_SPACE:
                     self.pause_screen()
 
@@ -337,7 +337,7 @@ while True:
                 start_game_animation_sequence()
                 g.new(mm.mute)
                 # turn 'go' into an object of GameOver class
-                if not g.pause.exit or g.cnfrm_ext.exit:
+                if not g.pause.exit and not g.cnfrm_ext.exit:
                     go = GameOverScreen(g.score, g.highscore)
                     # if player dies, game over screen runs
                     go.new()
