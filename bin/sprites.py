@@ -113,6 +113,15 @@ class TeleportPowerUp(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.position = position
         self.rect.center = self.position
+        self.mask = pg.mask.from_surface(self.image)
+
+
+class Spikes(pg.sprite.Sprite):
+    def __init__(self, position):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load('bin/assets/game_screen/spikes.png').convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.topleft = position
 
 
 def spawn_power_up(generate, pu_spawn_height):

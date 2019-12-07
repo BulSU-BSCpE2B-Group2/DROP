@@ -53,6 +53,10 @@ class Game:
         self.player_sprite = pg.sprite.Group()
         self.teleportpowerup = pg.sprite.Group()
 
+        self.spikes = pg.sprite.Group()
+        self.spike = Spikes((0, 0))
+        self.spikes.add(self.spike)
+
         # for spawning the starting platforms
         for plat in platform_list:
             p = Platform(plat)
@@ -197,7 +201,7 @@ class Game:
 
         # check if player hits a platform - only if it's falling.
         if self.player.vel.y > 0:
-            hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+            hits = pg.sprite.spritecollide(self.player, self.platforms, False, pg.sprite.collide_mask)
             if hits:
                 self.player.pos.y = hits[0].rect.top
                 self.player.vel.y = 0
@@ -221,9 +225,11 @@ class Game:
             self.teleport = False
 
         # if player reaches spike, player dies.
-        if self.player.rect.top < 0:
-            self.damaged_sound.play()
-            self.running = False
+        if self.score > 10:
+            spike_hit = pg.sprite.spritecollide(self.player, self.spikes, False, pg.sprite.collide_mask)
+            if spike_hit:
+                self.running = False
+                self.damaged_sound.play()
 
         # over time, alpha count falls for screen flash found in draw function
         self.alpha -= 5
@@ -239,6 +245,7 @@ class Game:
         self.platforms.update()
         self.slowplatformpowerup.update()
         self.teleportpowerup.update()
+        self.spikes.update()
 
         # for debugging purposes, do not remove yet.
         """print("Speed is: {}".format(self.speed))
@@ -290,9 +297,8 @@ class Game:
         self.slowplatformpowerup.draw(self.screen)
         self.player_sprite.draw(self.screen)
         self.platforms.draw(self.screen)
+        self.spikes.draw(self.screen)
 
-        # draw the spikes
-        screen.blit(self.spikes, self.spikes_rect)
 
         # draw and update the score
         draw_text('SCORE: ' + str(self.score), 22, white, WIDTH / 2, 75)
