@@ -1,4 +1,3 @@
-# Sprite classes for platform game
 import random
 from .settings import *
 
@@ -52,7 +51,6 @@ class Player(pg.sprite.Sprite):
         self.originalHeight = originalRect.height
         self.rect.center = oldcenter
         self.mask = pg.mask.from_surface(self.image)
-        #print("Astronaut dimension is (WIDTH: {}, HEIGHT: {})".format(self.rect.width, self.rect.height))
 
     def update(self, friction):
         self.accel = vec(0, player_gravity)
