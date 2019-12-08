@@ -23,7 +23,7 @@ class ConfirmExitScreen:
             self.draw()
 
     def update(self):
-        if self.i <= 85:
+        if self.i <= 80:
             self.timer += 0.007
             self.surface = pg.Surface((WIDTH, height), pg.SRCALPHA)
             self.i += 1

@@ -1,5 +1,5 @@
-from .settings import *
 from .credits import *
+from .settings import *
 
 vec = pg.math.Vector2
 

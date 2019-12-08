@@ -1,5 +1,5 @@
-import random
 from .settings import *
+import random
 
 vec = pg.math.Vector2
 
@@ -55,7 +55,6 @@ class Player(pg.sprite.Sprite):
 
     def update(self, friction):
         self.accel = vec(0, player_gravity)
-        # self.image.fill(self.cycle_color())
         if current_ticks() > self.next_frame:
             self.frame = (self.frame+1)%2
             self.next_frame += 100
@@ -108,8 +107,7 @@ class SlowPlatformPowerUp(pg.sprite.Sprite):
 class TeleportPowerUp(pg.sprite.Sprite):
     def __init__(self, position):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((10, 10), pg.SRCALPHA)
-        self.image.fill(green)
+        self.image = pg.image.load('bin/assets/game_screen/teleportpu.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.position = position
         self.rect.center = self.position

@@ -1,8 +1,6 @@
 from bin import *
+import random
 
-
-RESET_SPEED_EVENT = pg.USEREVENT + 1
-TELEPORT_EVENT = pg.USEREVENT + 2
 
 class Game:
     def __init__(self):
@@ -21,9 +19,8 @@ class Game:
         self.spikes_rect.topleft = (0, 0)
 
         # will be used later for loading
-        self.slow_indicator = pg.Surface((WIDTH, height))
-        self.slow_indicator = self.slow_indicator.convert_alpha(self.slow_indicator)
-        self.slow_indicator.fill((0, 0, 125, 50))
+        self.slow_indicator = pg.Surface((WIDTH, height), pg.SRCALPHA)
+        self.slow_indicator.fill((0, 0, 125, 30))
 
         # load sounds
         self.asset_dir = path.join(directory, 'assets')
@@ -232,10 +229,10 @@ class Game:
         if self.score > 10:
             spike_hit = pg.sprite.spritecollide(self.player, self.spikes, False, pg.sprite.collide_mask)
             if spike_hit:
-                self.game_over()
                 self.damaged_sound.play()
                 for player in self.player_sprite:
                     player.kill()
+                self.game_over()
 
         # over time, alpha count falls for screen flash found in draw function
         self.alpha -= 5

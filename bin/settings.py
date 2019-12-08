@@ -1,6 +1,5 @@
 import itertools
 import pygame as pg
-import random
 from os import path
 vec = pg.math.Vector2
 
@@ -72,7 +71,7 @@ def current_ticks(): # this is clock()
     current_time = pg.time.get_ticks()
     return current_time
 
-#======================= CONSTANTS ==============================#
+# ======================= CONSTANTS ============================== #
 
 # game resolution and fps
 running = True
@@ -82,9 +81,13 @@ height = 768
 fps = 60
 font_style = 'verdana'
 highscore_textfile = 'highscore.txt'
-screen = pg.display.set_mode((WIDTH, height))
+screen = pg.display.set_mode((WIDTH, height), pg.FULLSCREEN)
 clock = pg.time.Clock()
 font_name = pg.font.match_font(font_style)
+
+# custom trigger events
+RESET_SPEED_EVENT = pg.USEREVENT + 1
+TELEPORT_EVENT = pg.USEREVENT + 2
 
 # Player properties:
 player_accel = 0.5
@@ -110,5 +113,5 @@ yellow = (255, 255, 0)
 dark_red = (125, 0, 0)
 colors = itertools.cycle(['red', 'blue', 'orange', 'purple'])
 
-#for start_game_screen.py
+# for start_game_screen.py
 text_at_start = ['READY', 'SET']

@@ -1,5 +1,4 @@
 from .settings import *
-import pygame as pg
 
 
 class GameOverScreen:
