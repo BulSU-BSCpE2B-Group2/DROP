@@ -250,11 +250,6 @@ class Game:
         self.teleportpowerup.update()
         self.spikes.update()
 
-        # for debugging purposes, do not remove yet.
-        """print("Speed is: {}".format(self.speed))
-        print("Speed multiplier is: {}".format(self.multiplier))
-        print("Current interval is: {}".format(self.currentInterval))"""
-
     def events(self):
         # Game loop for updates on inputs or whatever interaction you make inside the window
         for event in pg.event.get():
@@ -273,10 +268,6 @@ class Game:
                 # if escape it should go to the confirm exit screen
                 if event.key == pg.K_ESCAPE:
                     self.confirm_exit()
-                    """elif event.key == pg.K_e:
-                        # pressing 'e' should reset the game
-                        self.platforms.empty()
-                        self.new(self.mute)"""
                 # pressing spaces should pause the screen
                 elif event.key == pg.K_SPACE:
                     self.pause_screen()
@@ -341,7 +332,7 @@ g = Game()
 # turn 'c' into an object of Credits class
 c = Credits()
 # loop that makes restarting work. will only be broken by break statements
-
+start_animation = StartAnimation()
 g.mute = False
 c.new()
 while True:
@@ -356,7 +347,7 @@ while True:
         else:
             while True:
                 # start animation sequence and initialize new game function & loop
-                start_game_animation_sequence()
+                start_animation.new()
                 g.new(mm.mute)
                 # turn 'go' into an object of GameOver class
                 if not g.pause.exit and not g.cnfrm_ext.exit and not g.running:

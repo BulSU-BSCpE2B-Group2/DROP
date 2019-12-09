@@ -36,9 +36,6 @@ class Player(pg.sprite.Sprite):
         self.angle = 0
         self.scale = 1
 
-    def addImage(self, filename):
-        self.images.append(pg.image.load(filename).convert_alpha())
-
     def changeImage(self, index):
         self.currentImage = index
         if self.angle == 0 and self.scale == 1:
