@@ -7,6 +7,11 @@ class ConfirmExitScreen:
         self.position_x = 0
         self.interval = 1000
 
+        self.confirm_exit_img = pg.image.load('bin/assets/confirm_exit/sure.png').convert_alpha()
+        self.confirm_exit_img = pg.transform.smoothscale(self.confirm_exit_img, (730, 353))
+        self.confirm_exit_img_rect = self.confirm_exit_img.get_rect()
+        self.confirm_exit_img_rect.center = (WIDTH / 2, height / 2)
+
     def new(self):
         self.running = True
         self.exit = False
@@ -33,12 +38,10 @@ class ConfirmExitScreen:
             self.running = self.wait_key_event_pause_screen()
 
     def draw(self):
-        pg.draw.rect(self.surface, (125, 0, 0, 100), (self.position_x, 0, 10, height))
-        pg.draw.rect(self.surface, (125, 0, 0, 100), ((WIDTH - 10) - self.position_x, 0, 10, height))
+        pg.draw.rect(self.surface, (125, 125, 0, 100), (self.position_x, 0, 10, height))
+        pg.draw.rect(self.surface, (125, 125, 0, 100), ((WIDTH - 10) - self.position_x, 0, 10, height))
         screen.blit(self.surface, (0, 0))
-        draw_text('Are you sure you want to quit?', 45, white, WIDTH / 2, height / 2 - 30)
-        draw_text('Press RETURN to confirm', 25, white, WIDTH / 2, height / 2 + 45)
-        draw_text('Press ESC to cancel and continue', 25, white, WIDTH / 2, height / 2 + 95)
+        screen.blit(self.confirm_exit_img, self.confirm_exit_img_rect)
         pg.display.flip()
 
     def events(self):
@@ -46,9 +49,9 @@ class ConfirmExitScreen:
             if event.type == pg.QUIT:
                 self.running = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    self.running = False
                 if event.key == pg.K_RETURN:
+                    self.running = False
+                if event.key == pg.K_ESCAPE:
                     self.exit = True
                     self.running = False
 
@@ -61,10 +64,10 @@ class ConfirmExitScreen:
                     self.waiting = False
                     return self.waiting
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE:
+                    if event.key == pg.K_RETURN:
                         self.waiting = False
                         return self.waiting
-                    if event.key == pg.K_RETURN:
+                    if event.key == pg.K_ESCAPE:
                         self.waiting = False
                         self.exit = True
                         return self.waiting
