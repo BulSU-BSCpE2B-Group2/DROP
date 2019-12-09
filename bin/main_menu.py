@@ -41,6 +41,7 @@ class MainMenu:
         self.timer = 0
         self.alpha = 0
         self.alpha_settings = 0
+        self.how_to_alpha = 0
         self.show_settings = False
         self.show_howto = False
 
@@ -241,7 +242,7 @@ class MainMenu:
                                         self.item_select.play()
                                         pg.mixer.music.play(loops=-1)
 
-            if self.show_howto:
+            elif self.show_howto:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
                         self.show_howto = False

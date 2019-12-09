@@ -4,13 +4,23 @@ from .settings import *
 class Credits:
     def __init__(self):
         self.black_cover = pg.Surface((WIDTH, height), pg.SRCALPHA)
+        self.imgs = [pg.image.load('bin/assets/credits/prepared.png').convert_alpha(),
+                     pg.image.load('bin/assets/credits/GRAPHICS-TEAM.png').convert_alpha(),
+                     pg.image.load('bin/assets/credits/LOGIC-TEAM.png').convert_alpha()]
+        self.img1 = pg.transform.smoothscale(self.imgs[0], (WIDTH, height))
+        self.img1_rect = self.imgs[0].get_rect()
+        self.img1_rect.topleft = (0, 0)
+        self.img2 = pg.transform.smoothscale(self.imgs[1], (WIDTH, height))
+        self.img2_rect = self.imgs[1].get_rect()
+        self.img2_rect.topleft = (0, 0)
+        self.img3 = pg.transform.smoothscale(self.imgs[2], (WIDTH, height))
+        self.img3_rect = self.imgs[2].get_rect()
+        self.img3_rect.topleft = (0, 0)
 
     def new(self):
         self.running = True
-        self.firstmessage = True
-        self.secondmessage = False
-        self.thirdmessage = False
-        self.multiplier = 1
+        self.message = 1
+        self.iterator = 0
         self.timer = 0
         self.alpha = 255
         self.run()
@@ -32,50 +42,30 @@ class Credits:
                     self.running = False
 
     def update(self):
-        self.timer += 2
-        if 0 < self.timer < 254:
-            self.alpha -= 2
-            self.firstmessage = True
-            self.secondmessage = False
-        elif 253 < self.timer < 506:
-            self.alpha += 2
-        elif 506 <= self.timer < 759:
-            self.alpha -= 2
-            self.secondmessage = True
-            self.firstmessage = False
-        elif 759 <= self.timer < 1011:
-            self.alpha += 2
-        elif 1011 < self.timer < 1263:
-            self.alpha -= 2
-            self.thirdmessage = True
-            self.secondmessage = False
-        elif 1263 < self.timer < 1515:
-            self.alpha += 2
-        elif 1515 < self.timer < 1600:
-            self.alpha = 255
+        if self.message < 4:
+            if self.iterator %2 == 0:
+                self.alpha -= 2
+                if self.alpha == 1:
+                    self.iterator += 1
+            elif self.iterator %2 >= 1:
+                self.alpha += 2
+                if self.alpha == 255:
+                    self.iterator += 1
+                    self.message += 1
         else:
-            self.running = 0
-
-        print("Timer is: {}".format(self.timer))
+            self.running = False
         print("ALPHA IS: {}".format(self.alpha))
+
 
     def draw(self):
         screen.fill(black)
 
-        if self.firstmessage:
-            draw_text('Prepared by GROUP 2', 25, white, WIDTH / 2, height / 2)
-            draw_text('of BSCpE - 2B', 25, white, WIDTH / 2, height / 2 + 50)
-        if self.secondmessage:
-            draw_text('Credits to:', 25, white, WIDTH / 2, height / 2 - 100)
-            draw_text('John Paul Cervantes - Graphics Design', 20, white, WIDTH / 2, height / 2 - 60)
-            draw_text('Joshua Mark Esguerra - Graphics Design and Sounds', 20, white, WIDTH / 2, height / 2 - 30)
-            draw_text('Melissa Mendoza - Graphics Design and Layout', 20, white, WIDTH / 2, height / 2)
-            draw_text('Ramon Soledad - Graphics Design', 20, white, WIDTH / 2, height / 2 + 30)
-        if self.thirdmessage:
-            draw_text('Kristian Santos - Game Logistics and Power-up Implementation', 20, white, WIDTH / 2, height / 2 - 60)
-            draw_text('Jonas Pagtalunan - Game Logistics', 20, white, WIDTH /2 , height / 2 - 30)
-            draw_text('Paul Christian Aguilar - Game Logistics and Quality Control', 20, white, WIDTH / 2, height / 2)
-            draw_text('Ronie de Jesus - Game Logistics', 20, white, WIDTH / 2, height / 2 + 30)
+        if self.message == 1:
+            screen.blit(self.img1, self.img1_rect)
+        if self.message == 2:
+            screen.blit(self.img2, self.img2_rect)
+        if self.message == 3:
+            screen.blit(self.img3, self.img3_rect)
 
         self.black_cover.fill((0, 0, 0, self.alpha))
         screen.blit(self.black_cover, (0, 0))
