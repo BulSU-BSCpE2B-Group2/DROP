@@ -42,6 +42,10 @@ class MainMenu:
         self.alpha = 0
         self.alpha_settings = 0
         self.show_settings = False
+        self.show_howto = False
+
+        self.settings_overlay_with_opacity = pg.Surface((WIDTH, height), pg.SRCALPHA)
+
         self.background = vec(0, 0)
         self.background2 = vec(self.bg_rect.width, 0)
         # create the instance where the glow is positioned
@@ -64,11 +68,11 @@ class MainMenu:
             pg.mixer.music.fadeout(500)
 
     def update(self):
-        if self.show_settings:
+        if self.show_settings or self.show_howto:
             if self.alpha < 100:
                 self.alpha += 1
-            if self.alpha_settings < 255:
-                self.alpha_settings += 10
+            if self.how_to_alpha < 100:
+                self.how_to_alpha += 1
         self.background, self.background2 = scrolling_background(-2, 0, self.background, self.background2, self.bg_rect)
         self.mouse_coordinate = vec(pg.mouse.get_pos())
         # print("Mouse coordinate is at: {}".format(self.mouse_coordinate))
@@ -166,9 +170,8 @@ class MainMenu:
                         draw_text('How To Play', 25, white, self.button.how_to_button_rect.centerx, height / 2 - 10)
 
         if self.show_settings:
-            settings_overlay_with_opacity = pg.Surface((WIDTH, height), pg.SRCALPHA)
-            settings_overlay_with_opacity.fill((100, 100, 100, self.alpha))
-            screen.blit(settings_overlay_with_opacity, (0, 0))
+            self.settings_overlay_with_opacity.fill((100, 100, 100, self.alpha))
+            screen.blit(self.settings_overlay_with_opacity, (0, 0))
             screen.blit(self.settings_screen.settings_overlay, self.settings_screen.settings_overlay_rect)
             screen.blit(self.settings_screen.x, self.settings_screen.x_rect)
 
@@ -187,6 +190,21 @@ class MainMenu:
             else:
                 screen.blit(self.settings_screen.music_option_off, self.settings_screen.music_option_off_rect)
 
+        if self.show_howto:
+            self.settings_overlay_with_opacity.fill((100, 100, 100, self.how_to_alpha))
+            screen.blit(self.settings_overlay_with_opacity, (0, 0))
+            screen.blit(self.how_to_play.how_to_play_button, self.how_to_play.how_to_play_button_rect)
+            screen.blit(self.how_to_play.x, self.how_to_play.x_rect)
+
+            if self.mouse_coordinate.x > self.how_to_play.x_rect.x:
+                if self.mouse_coordinate.x < self.how_to_play.x_rect.x + self.how_to_play.x_rect.width:
+                    if self.mouse_coordinate.y > self.how_to_play.x_rect.y:
+                        if self.mouse_coordinate.y < self.how_to_play.x_rect.y + self.how_to_play.x_rect.height:
+                            self.how_to_play.x_rect_enlarged = pg.transform.smoothscale(self.how_to_play.x,
+                                                                                          (115, 108))
+                            self.how_to_play.x_rect_enlarged_rect = self.how_to_play.x_rect_enlarged.get_rect()
+                            self.how_to_play.x_rect_enlarged_rect.center = self.how_to_play.x_rect.center
+                            screen.blit(self.how_to_play.x_rect_enlarged, self.how_to_play.x_rect_enlarged_rect)
 
         pg.display.flip()
 
@@ -223,6 +241,18 @@ class MainMenu:
                                         self.item_select.play()
                                         pg.mixer.music.play(loops=-1)
 
+            if self.show_howto:
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        self.show_howto = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if self.mouse_coordinate.x > self.how_to_play.x_rect.x:
+                        if self.mouse_coordinate.x < self.how_to_play.x_rect.x + self.how_to_play.x_rect.width:
+                            if self.mouse_coordinate.y > self.how_to_play.x_rect.y:
+                                if self.mouse_coordinate.y < self.how_to_play.x_rect.y + self.how_to_play.x_rect.height:
+                                    self.show_howto = False
+                                    self.item_select.play()
+
             else:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if self.mouse_coordinate[0] > self.button.start_button_rect.x:
@@ -258,6 +288,13 @@ class MainMenu:
                                     self.item_select.play()
                                     c = Credits()
                                     c.new()
+                    if self.mouse_coordinate.x > self.button.how_to_button_rect.x:
+                        if self.mouse_coordinate.x < self.button.how_to_button_rect.x + self.button.how_to_button_rect.width:
+                            if self.mouse_coordinate.y > self.button.how_to_button_rect.y:
+                                if self.mouse_coordinate.y < self.button.how_to_button_rect.y + self.button.how_to_button_rect.height:
+                                    self.how_to_alpha = 0
+                                    self.show_howto = True
+                                    self.item_select.play()
 
 class Logo:
     def __init__(self):
@@ -402,5 +439,9 @@ class Comets:
 
 class HowToPlay:
     def __init__(self):
-        # self.how_to_play_button = pg.image.load()
-        pass
+        self.how_to_play_button = pg.image.load('bin/assets/settings_menu/help.png').convert_alpha()
+        self.how_to_play_button_rect = self.how_to_play_button.get_rect()
+        self.how_to_play_button_rect.center = (WIDTH / 2, height / 2)
+        self.x = pg.image.load('bin/assets/settings_menu/x.png').convert_alpha()
+        self.x_rect = self.x.get_rect()
+        self.x_rect.topright = self.how_to_play_button_rect.topright
