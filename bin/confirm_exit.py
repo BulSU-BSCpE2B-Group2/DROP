@@ -7,7 +7,7 @@ class ConfirmExitScreen:
         self.position_x = 0
         self.interval = 1000
 
-        self.confirm_exit_img = pg.image.load('bin/assets/confirm_exit/sure.png').convert_alpha()
+        self.confirm_exit_img = pg.image.load('bin/assets/confirm_exit/confirm_exit.png').convert_alpha()
         self.confirm_exit_img = pg.transform.smoothscale(self.confirm_exit_img, (730, 353))
         self.confirm_exit_img_rect = self.confirm_exit_img.get_rect()
         self.confirm_exit_img_rect.center = (WIDTH / 2, height / 2)

@@ -9,7 +9,7 @@ class GameOverScreen:
         self.asset_dir = path.join(directory, 'assets')
         self.sound_dir = path.join(self.asset_dir, 'sounds')
 
-        self.game_over_msg_not_hs = pg.image.load('bin/assets/game_over/game_over_msg.png').convert_alpha()
+        self.game_over_msg_not_hs = pg.image.load('bin/assets/game_over/gameover_msg_no_hs.png').convert_alpha()
         self.game_over_msg_not_hs = pg.transform.smoothscale(self.game_over_msg_not_hs, (500, 246))
         self.game_over_msg_not_hs_rect = self.game_over_msg_not_hs.get_rect()
         self.game_over_msg_not_hs_rect.center = (WIDTH / 2, height / 2)

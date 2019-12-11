@@ -6,7 +6,7 @@ class PauseScreen:
         self.i = 0
         self.position_x = 0
         self.interval = 1000
-        self.pause_img = pg.image.load('bin/assets/pause_screen/pause.png').convert_alpha()
+        self.pause_img = pg.image.load('bin/assets/pause_screen/pause_screen.png').convert_alpha()
         self.pause_img = pg.transform.smoothscale(self.pause_img, (500, 246))
         self.pause_img_rect = self.pause_img.get_rect()
         self.pause_img_rect.center = (WIDTH / 2, height / 2)
