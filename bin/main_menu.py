@@ -76,7 +76,7 @@ class MainMenu:
                 self.how_to_alpha += 1
         self.background, self.background2 = scrolling_background(-2, 0, self.background, self.background2, self.bg_rect)
         self.mouse_coordinate = vec(pg.mouse.get_pos())
-        # print("Mouse coordinate is at: {}".format(self.mouse_coordinate))
+
         self.planet_mars.glow_update()
         self.planet_venus.glow_update()
         self.planet_earth.glow_update()

@@ -31,7 +31,14 @@ class StartAnimation:
             self.draw()
 
     def events(self):
-        pass
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pass
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:
+                    pass
+                if event.key == pg.K_ESCAPE:
+                    pass
 
     def update(self):
         if self.iterator < 3:

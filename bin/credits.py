@@ -54,7 +54,6 @@ class Credits:
                     self.message += 1
         else:
             self.running = False
-        print("ALPHA IS: {}".format(self.alpha))
 
 
     def draw(self):

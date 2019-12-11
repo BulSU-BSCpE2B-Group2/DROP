@@ -14,6 +14,11 @@ class GameOverScreen:
         self.game_over_msg_not_hs_rect = self.game_over_msg_not_hs.get_rect()
         self.game_over_msg_not_hs_rect.center = (WIDTH / 2, height / 2)
 
+        self.game_over_msg_new_hs = pg.image.load('bin/assets/game_over/game_over_msg_new_hs.png').convert_alpha()
+        self.game_over_msg_new_hs = pg.transform.smoothscale(self.game_over_msg_new_hs, (500, 246))
+        self.game_over_msg_new_hs_rect = self.game_over_msg_new_hs.get_rect()
+        self.game_over_msg_new_hs_rect.center = (WIDTH / 2, height / 2)
+
         self.gameover_overlay = pg.image.load('bin/assets/game_over/gameover_overlay.png').convert_alpha()
         self.gameover_overlay_rect = self.gameover_overlay.get_rect()
         self.gameover_overlay_rect.topleft = (0, 0)
@@ -51,17 +56,17 @@ class GameOverScreen:
         screen.blit(self.fade, (0, 0))
 
         # draw text for game over screen
-        screen.blit(self.game_over_msg_not_hs, self.game_over_msg_not_hs_rect)
 
         # if score is higher than highscore
+        if self.score < self.highscore:
+            screen.blit(self.game_over_msg_not_hs, self.game_over_msg_not_hs_rect)
+            draw_text(str(self.highscore), 30, white, WIDTH / 2 + 100, self.game_over_msg_not_hs_rect.centery - 41)
+
         if self.score > self.highscore:
-            draw_text('New high score!', 22, (255, 255, 255, self.alpha), WIDTH / 2, height / 2 + 300)
+            screen.blit(self.game_over_msg_new_hs, self.game_over_msg_new_hs_rect)
+            draw_text(str(self.score), 30, white, WIDTH / 2 + 100, self.game_over_msg_not_hs_rect.centery - 47)
             with open(path.join(directory, highscore_textfile), 'w') as f:
                 f.write(str(self.score))
-            if self.alpha == 1:
-                self.highscore = self.score
-
-        draw_text(str(self.highscore), 30, white, WIDTH / 2 + 100, self.game_over_msg_not_hs_rect.centery - 41)
 
         pg.display.flip()
 
